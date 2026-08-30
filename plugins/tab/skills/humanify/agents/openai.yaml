@@ -1,0 +1,4 @@
+interface:
+  display_name: "Humanify"
+  short_description: "Make writing clear and natural"
+  default_prompt: "Use $humanify to make this text clear and natural without changing its meaning."
