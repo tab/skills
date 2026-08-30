@@ -1,0 +1,189 @@
+---
+import Layout from "../layouts/Layout.astro";
+import BrandIcon from "../components/BrandIcon.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import { skills } from "../data/skills";
+
+const base = import.meta.env.BASE_URL;
+const installs = [
+  {
+    host: "Claude Code",
+    commands: [
+      "claude plugin marketplace add tab/skills",
+      "claude plugin install tab@skills",
+    ],
+  },
+  {
+    host: "Codex",
+    commands: [
+      "codex plugin marketplace add tab/skills",
+      "codex plugin add tab@skills",
+    ],
+  },
+];
+---
+
+<Layout
+  title="Agent Tools – Skills for Claude Code and Codex"
+  description="Usable skills for Claude Code and Codex."
+>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-left">
+        <a class="brand" href={base} aria-label="Agent Tools home">
+          <BrandIcon />
+          <span>Agent Tools</span>
+        </a>
+        <nav aria-label="Main navigation">
+          <a href="#skills">Skills</a>
+          <a href="#install">Install</a>
+        </nav>
+      </div>
+      <div class="header-actions">
+        <ThemeToggle />
+        <a class="github-link" href="https://github.com/tab/skills" target="_blank" rel="noopener">
+          GitHub
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 17 17 7M7 7h10v10"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1>Usable skills for Claude Code and Codex</h1>
+          <p class="hero-description">
+            Clarify unexpected behavior, draft commit messages, review engineering decisions and improve text.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#install">Install</a>
+            <a class="button button-secondary" href="#skills">View skills</a>
+          </div>
+        </div>
+
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span></span><span></span><span></span>
+            <p>usage</p>
+          </div>
+          <div class="terminal-body">
+            <p class="terminal-label">Claude Code</p>
+            <p><span class="prompt">›</span> /cmt</p>
+            <p class="terminal-label">Codex</p>
+            <p><span class="prompt">›</span> $cmt</p>
+            <div class="terminal-result">
+              <span>✓</span>
+              <p>Draft a commit message from the current changes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="skills-section" id="skills">
+      <div class="container">
+        <div class="section-heading reveal" data-reveal>
+          <h2>Pick the skill that <span class="no-break">fits the task</span></h2>
+          <p>Call a skill directly or describe what you need in plain language.</p>
+        </div>
+        <div class="skill-grid">
+          {skills.map((skill, index) => (
+            <article class="skill-card reveal" data-reveal style={`--delay: ${index * 70}ms`}>
+              <div class="skill-number" aria-hidden="true">0{index + 1}</div>
+              <h3><code>{skill.name}</code></h3>
+              <p>
+                {skill.description.map((part) => (
+                  part.href
+                    ? <a href={part.href} target="_blank" rel="noopener">{part.text}</a>
+                    : part.text
+                ))}
+              </p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="install-section" id="install">
+      <div class="container install-inner">
+        <h2 class="install-title reveal" data-reveal>Install</h2>
+        <p class="install-description reveal" data-reveal>
+          The first command adds the marketplace and the second installs the plugin.
+        </p>
+        {installs.map((install, index) => (
+          <div class="install-method reveal" data-reveal style={`--delay: ${index * 90}ms`}>
+            <h3>{install.host}</h3>
+            <article class="command-card">
+              <div class="command-header">
+                <span>terminal</span>
+                <button
+                  class="copy-button"
+                  type="button"
+                  data-copy={install.commands.join("\n")}
+                  aria-label={`Copy ${install.host} install commands`}
+                  aria-live="polite"
+                >
+                  Copy
+                </button>
+              </div>
+              <pre><code>{install.commands.join("\n")}</code></pre>
+            </article>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <a class="brand" href={base}>
+        <BrandIcon size={30} />
+        <span>Agent Tools</span>
+      </a>
+      <p>MIT License</p>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const value = button.dataset.copy;
+        if (!value) return;
+
+        try {
+          await navigator.clipboard.writeText(value);
+          button.textContent = "Copied";
+        } catch {
+          button.textContent = "Copy failed";
+        }
+
+        window.setTimeout(() => {
+          button.textContent = "Copy";
+        }, 1600);
+      });
+    });
+
+    const revealElements = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      revealElements.forEach((element) => element.classList.add("is-visible"));
+    } else {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.12 });
+
+      revealElements.forEach((element) => observer.observe(element));
+    }
+  </script>
+</Layout>

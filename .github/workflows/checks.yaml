@@ -39,3 +39,25 @@ jobs:
 
       - name: Validate repository
         run: make validate
+
+  docs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      ASTRO_TELEMETRY_DISABLED: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.20.0
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+
+      - name: Install dependencies
+        run: make docs:install
+
+      - name: Build site
+        run: make docs

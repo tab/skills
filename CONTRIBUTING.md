@@ -31,6 +31,30 @@ make validate
 Review changes with [the core review guide](.github/CORE_REVIEW.md).
 Use [the code review prompt](.github/CODE_REVIEW_PROMT.md) when an agent runs the review.
 
+## Check the landing page
+
+Install dependencies and build the site:
+
+```bash
+make docs:install
+make docs
+```
+
+Run a local preview with Astro:
+
+```bash
+make docs:dev
+```
+
+Or run the production image with Docker Compose:
+
+```bash
+make docs:up
+```
+
+Open `http://localhost:8080/skills/` for the Docker preview.
+Use `make docs:down` to stop it.
+
 ## Release checklist
 
 - Review the full diff

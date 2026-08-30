@@ -55,11 +55,13 @@ Each skill has one shared source under `plugins/tab/skills/<skill-name>/`.
 - Document only marketplace installation
 - Pin third-party workflow actions to full commit SHAs and keep the version in a comment
 - Update `README.md` when installation, invocation or repository layout changes
+- Update the README and landing page when the skill list changes
 
 ## Validation
 
 - Run `make test` after changing skills, manifests or marketplace files
 - Run `make validate` after changing skills, manifests or marketplace files
+- Run `make docs` after changing the landing page
 - Test representative requests after a meaningful skill behavior change
 - Check direct activation, indirect activation, incomplete input, non-matching input and one important edge case
 - Run `git diff --check` before handing off the change
