@@ -4,10 +4,11 @@ Usable workflows for Claude Code and Codex
 
 ## Skills
 
-| Skill     | Description                                                            |
-|-----------|------------------------------------------------------------------------|
-| `cmt`     | Draft a Conventional Commit message for the current Git changes        |
-| `council` | Stress-test an engineering decision with five independent perspectives |
+| Skill      | Description                                                            |
+|------------|------------------------------------------------------------------------|
+| `cmt`      | Draft a Conventional Commit message for the current Git changes        |
+| `council`  | Stress-test an engineering decision with five independent perspectives |
+| `humanify` | Make prose, Markdown and code comments clear and natural               |
 
 Use `/cmt` in Claude Code or `$cmt` in Codex.
 If `/cmt` conflicts with another command, use `/tab:cmt` in Claude Code.

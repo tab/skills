@@ -28,7 +28,8 @@
     ],
     "defaultPrompt": [
       "Draft a Conventional Commit message for my changes.",
-      "Stress-test this engineering decision with a council."
+      "Stress-test this engineering decision with a council.",
+      "Make this text clear and natural without changing its meaning."
     ]
   }
 }
