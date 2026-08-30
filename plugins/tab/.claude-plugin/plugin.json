@@ -1,12 +1,12 @@
 {
   "name": "tab",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Usable workflows for Claude Code and Codex.",
   "author": {
     "name": "tab",
     "url": "https://github.com/tab"
   },
-  "homepage": "https://github.com/tab/skills",
+  "homepage": "https://tab.github.io/skills/",
   "repository": "https://github.com/tab/skills",
   "license": "MIT",
   "keywords": [
