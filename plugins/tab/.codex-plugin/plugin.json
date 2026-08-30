@@ -25,6 +25,10 @@
       "Writing",
       "Editing",
       "Analysis"
+    ],
+    "defaultPrompt": [
+      "Draft a Conventional Commit message for my changes.",
+      "Stress-test this engineering decision with a council."
     ]
   }
 }
