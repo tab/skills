@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__HOOK_COMMAND__",
+            "timeout": 10,
+            "statusMessage": "Checking for git commit"
+          }
+        ]
+      }
+    ]
+  }
+}

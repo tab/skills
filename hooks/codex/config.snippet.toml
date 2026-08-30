@@ -1,0 +1,8 @@
+# No matcher, so the hook runs for every tool.
+# It exits without a decision when the payload carries no shell command.
+[[hooks.PreToolUse]]
+
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "__HOOK_COMMAND__"
+timeout = 10
