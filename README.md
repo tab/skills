@@ -2,17 +2,6 @@
 
 Usable workflows for Claude Code and Codex
 
-## Skills
-
-| Skill      | Description                                                            |
-|------------|------------------------------------------------------------------------|
-| `cmt`      | Draft a Conventional Commit message for the current Git changes        |
-| `council`  | Stress-test an engineering decision with five independent perspectives |
-| `humanify` | Make prose, Markdown and code comments clear and natural               |
-
-Use `/cmt` in Claude Code or `$cmt` in Codex.
-If `/cmt` conflicts with another command, use `/tab:cmt` in Claude Code.
-
 ## Install
 
 Claude Code:
@@ -30,6 +19,21 @@ codex plugin add tab@skills
 ```
 
 Start a new session after installation.
+
+## Skills
+
+| Skill      | Description                                                            |
+|------------|------------------------------------------------------------------------|
+| `clarify`  | Explain expectation mismatches with current evidence                   |
+| `cmt`      | Draft a Conventional Commit message for the current Git changes        |
+| `council`  | Stress-test an engineering decision with five independent perspectives |
+| `humanify` | Make prose, Markdown and code comments clear and natural               |
+
+Use:
+- `/cmt` in Claude Code
+- `$cmt` in Codex
+
+If `/cmt` conflicts with another command, use `/tab:cmt` in Claude Code.
 
 ## Repository layout
 
@@ -56,4 +60,7 @@ Host-specific metadata stays in the matching manifest or `agents/openai.yaml`.
 - Run `make validate` to validate the repository and plugin manifests
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full checks.
-Licensed under the [MIT License](LICENSE).
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
