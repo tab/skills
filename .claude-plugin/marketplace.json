@@ -1,0 +1,17 @@
+{
+  "name": "skills",
+  "description": "Reusable workflows for Claude Code and Codex.",
+  "owner": {
+    "name": "tab"
+  },
+  "plugins": [
+    {
+      "name": "tab",
+      "source": "./plugins/tab",
+      "description": "Reusable workflows for Claude Code and Codex.",
+      "author": {
+        "name": "tab"
+      }
+    }
+  ]
+}

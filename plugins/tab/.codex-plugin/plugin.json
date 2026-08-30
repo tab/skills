@@ -1,0 +1,29 @@
+{
+  "name": "tab",
+  "version": "0.1.0",
+  "description": "Reusable workflows for Claude Code and Codex.",
+  "author": {
+    "name": "tab",
+    "url": "https://github.com/tab"
+  },
+  "homepage": "https://github.com/tab/skills",
+  "repository": "https://github.com/tab/skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "workflows",
+    "productivity"
+  ],
+  "interface": {
+    "displayName": "Skills",
+    "shortDescription": "Reusable workflows for Claude Code and Codex",
+    "longDescription": "One plugin provides the same reusable skills in Claude Code and Codex.",
+    "developerName": "tab",
+    "category": "Productivity",
+    "capabilities": [
+      "Writing",
+      "Editing",
+      "Analysis"
+    ]
+  }
+}
