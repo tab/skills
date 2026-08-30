@@ -1,0 +1,4 @@
+interface:
+  display_name: "Council"
+  short_description: "Stress-test decisions from five perspectives"
+  default_prompt: "Use $council to stress-test this engineering decision."
