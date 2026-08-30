@@ -1,7 +1,7 @@
 {
   "name": "tab",
   "version": "0.1.0",
-  "description": "Reusable workflows for Claude Code and Codex.",
+  "description": "Usable workflows for Claude Code and Codex.",
   "author": {
     "name": "tab",
     "url": "https://github.com/tab"

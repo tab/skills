@@ -1,6 +1,6 @@
 # Skills
 
-Reusable workflows for Claude Code and Codex
+Usable workflows for Claude Code and Codex
 
 ## Install
 
