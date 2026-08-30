@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title>Red toolbox</title>
+  <rect width="256" height="256" rx="56" fill="#f5f5f5"/>
+  <g transform="translate(128 132) scale(.82) translate(-128 -132)">
+    <path d="M82 82V58c0-14 11-25 25-25h42c14 0 25 11 25 25v24" fill="none" stroke="#9ca3af"
+      stroke-width="14"/>
+    <rect x="74" y="74" width="28" height="16" rx="5" fill="#e5e7eb"/>
+    <rect x="154" y="74" width="28" height="16" rx="5" fill="#e5e7eb"/>
+    <path d="M50 88h156l18 24v38H32v-38z" fill="#e53935"/>
+    <path d="M32 150h192v48c0 18-14 32-32 32H64c-18 0-32-14-32-32z" fill="#e53935"/>
+    <path d="M32 150h192" stroke="#222" stroke-width="8"/>
+    <rect x="54" y="166" width="14" height="44" rx="7" fill="#b71c1c"/>
+    <rect x="188" y="166" width="14" height="44" rx="7" fill="#b71c1c"/>
+    <rect x="104" y="128" width="48" height="48" rx="12" fill="#e5e7eb" stroke="#222" stroke-width="7"/>
+    <rect x="117" y="153" width="22" height="35" rx="7" fill="#9ca3af" stroke="#222" stroke-width="7"/>
+  </g>
+</svg>

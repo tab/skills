@@ -16,7 +16,7 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Skills",
+    "displayName": "Agent Tools",
     "shortDescription": "Usable workflows for Claude Code and Codex",
     "longDescription": "One plugin provides the same skills in Claude Code and Codex.",
     "developerName": "tab",
@@ -28,6 +28,10 @@
     ],
     "defaultPrompt": [
       "Check available skills and explain when to use each one."
-    ]
+    ],
+    "brandColor": "#E53935",
+    "composerIcon": "./assets/toolbox.svg",
+    "logo": "./assets/toolbox.svg",
+    "logoDark": "./assets/toolbox.svg"
   }
 }

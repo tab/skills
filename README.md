@@ -1,4 +1,4 @@
-# Skills
+# <img src="plugins/tab/assets/toolbox.svg" alt="" width="28">&nbsp;Agent Tools
 
 Usable workflows for Claude Code and Codex
 
