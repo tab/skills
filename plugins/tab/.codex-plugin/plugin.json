@@ -14,6 +14,7 @@
     "workflows",
     "productivity"
   ],
+  "skills": "./skills/",
   "interface": {
     "displayName": "Skills",
     "shortDescription": "Usable workflows for Claude Code and Codex",
