@@ -2,6 +2,8 @@
 
 Usable workflows for Claude Code and Codex
 
+[tab.github.io/skills](https://tab.github.io/skills/)
+
 ## Install
 
 Claude Code:
@@ -30,6 +32,7 @@ Start a new session after installation.
 | `humanify` | Make prose, Markdown and code comments clear and natural               |
 
 Use:
+
 - `/cmt` in Claude Code
 - `$cmt` in Codex
 
@@ -41,8 +44,9 @@ If `/cmt` conflicts with another command, use `/tab:cmt` in Claude Code.
 .
 ├── .agents/plugins/              # Codex marketplace
 ├── .claude-plugin/               # Claude Code marketplace
-├── .github/                      # Validation workflow and review guides
+├── .github/                      # CI workflows and review guides
 ├── AGENTS.md                     # Repository instructions for agents
+├── docs/                         # Astro landing page
 └── plugins/tab/
     ├── .codex-plugin/
     ├── .claude-plugin/
@@ -58,6 +62,8 @@ Host-specific metadata stays in the matching manifest or `agents/openai.yaml`.
 - Keep both plugin manifests on the same version
 - Run `make test` to test installation with Claude Code and Codex
 - Run `make validate` to validate the repository and plugin manifests
+- Run `make docs:install` once and `make docs` to build the landing page
+- Run `make docs:dev` for Astro or `make docs:up` for Docker preview
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full checks.
 

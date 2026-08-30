@@ -1,0 +1,104 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const socialImage = new URL("skills/og.png", Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#faf9f7" />
+    <link
+      id="site-icon"
+      rel="icon"
+      href={`${base}generated/toolbox.svg`}
+      data-light={`${base}generated/toolbox.svg`}
+      data-dark={`${base}generated/toolbox-dark.svg`}
+      type="image/svg+xml"
+    />
+    <link rel="canonical" href={Astro.url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Agent Tools – Usable skills for Claude Code and Codex" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content="Agent Tools – Usable skills for Claude Code and Codex" />
+    <title>{title}</title>
+    <script is:inline>
+      (() => {
+        let savedTheme;
+
+        try {
+          const storedTheme = localStorage.getItem("theme");
+          savedTheme = storedTheme === "light" || storedTheme === "dark" ? storedTheme : undefined;
+        } catch {}
+
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const theme = savedTheme || systemTheme;
+        const siteIcon = document.querySelector("#site-icon");
+
+        document.documentElement.dataset.theme = theme;
+
+        if (siteIcon instanceof HTMLLinkElement) {
+          siteIcon.href = theme === "dark" ? siteIcon.dataset.dark : siteIcon.dataset.light;
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      const themeToggle = document.querySelector<HTMLButtonElement>("#theme-toggle");
+      const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+      const siteIcon = document.querySelector<HTMLLinkElement>("#site-icon");
+
+      const updateThemeControl = () => {
+        const currentTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+        const nextTheme = currentTheme === "dark" ? "light" : "dark";
+
+        if (themeToggle) {
+          themeToggle.setAttribute("aria-label", `Use ${nextTheme} theme`);
+          themeToggle.setAttribute("title", `Use ${nextTheme} theme`);
+        }
+
+        if (themeColor) {
+          themeColor.content = currentTheme === "dark" ? "#161616" : "#faf9f7";
+        }
+
+        if (siteIcon) {
+          siteIcon.href = currentTheme === "dark" ? siteIcon.dataset.dark ?? "" : siteIcon.dataset.light ?? "";
+        }
+      };
+
+      updateThemeControl();
+
+      themeToggle?.addEventListener("click", () => {
+        const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = nextTheme;
+
+        try {
+          localStorage.setItem("theme", nextTheme);
+        } catch {}
+
+        updateThemeControl();
+      });
+    </script>
+  </body>
+</html>
