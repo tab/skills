@@ -6,6 +6,7 @@ Usable workflows for Claude Code and Codex
 
 | Skill      | Description                                                            |
 |------------|------------------------------------------------------------------------|
+| `clarify`  | Explain expectation mismatches with current evidence                   |
 | `cmt`      | Draft a Conventional Commit message for the current Git changes        |
 | `council`  | Stress-test an engineering decision with five independent perspectives |
 | `humanify` | Make prose, Markdown and code comments clear and natural               |

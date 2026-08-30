@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clarify"
+  short_description: "Explain expectation mismatches with evidence"
+  default_prompt: "Use $clarify to verify what I expected and explain the actual behavior."
