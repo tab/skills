@@ -48,7 +48,6 @@ Each skill has one shared source under `plugins/tab/skills/<skill-name>/`.
 ## Metadata and documentation
 
 - Keep marketplace name `skills` and plugin name `tab` unless the user requests a rename
-- Keep both plugin manifests on the same version
 - Keep names, descriptions, author, license and keywords aligned across manifests
 - Keep the README description aligned with the plugin metadata
 - List skills alphabetically in `README.md`
@@ -56,6 +55,16 @@ Each skill has one shared source under `plugins/tab/skills/<skill-name>/`.
 - Pin third-party workflow actions to full commit SHAs and keep the version in a comment
 - Update `README.md` when installation, invocation or repository layout changes
 - Update the README and landing page when the skill list changes
+
+## Versioning
+
+- Keep both plugin manifests on the same version
+- Bump the major version for an incompatible change, such as removing or renaming a skill
+- Bump the minor version for a new skill or a new feature
+- Bump the patch version for a fix or another change that keeps current behavior
+- Bump the version in its own commit, separate from the change it releases
+- Leave the version alone when the change does not affect what users install or run
+- Size the bump from the change, since earlier releases used a minor bump for everything
 
 ## Validation
 

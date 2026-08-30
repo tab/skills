@@ -35,6 +35,7 @@ Use [the code review prompt](CODE_REVIEW_PROMT.md) to run this review with an ag
 - Marketplace name remains `skills`
 - Plugin name remains `tab`
 - Both plugin manifests use the same version and package metadata
+- The version bump matches the change type
 - README and manifest descriptions make the same promise
 - Marketplace entries point to `./plugins/tab`
 - New skills appear in the README in alphabetical order

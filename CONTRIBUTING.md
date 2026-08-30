@@ -57,10 +57,21 @@ make docs:up
 Open `http://localhost:8080/skills/` for the Docker preview.
 Use `make docs:down` to stop it.
 
+## Versioning
+
+Both plugin manifests carry the same version and follow [semantic versioning](https://semver.org/):
+
+- **Major** – an incompatible change, such as removing or renaming a skill
+- **Minor** – a new skill or a new feature
+- **Patch** – a fix or another change that keeps current behavior
+
+Bump the version in its own commit, separate from the change it releases.
+A change that does not affect what users install or run, such as contributor documentation or CI, needs no bump.
+
 ## Release checklist
 
 - Review the full diff
-- Bump the plugin version when a skill changes
+- Bump the plugin version to match the change type
 - Run `make test`
 - Run `make validate`
 - Install `tab@skills` and test each changed skill in a new session
