@@ -38,6 +38,18 @@ Use:
 
 If `/cmt` conflicts with another command, use `/tab:cmt` in Claude Code.
 
+## Hooks
+
+`hooks/` holds optional `PreToolUse` hooks.
+Install them manually:
+
+```bash
+hooks/install.sh
+```
+
+`block-git-commit` denies `git commit` from a tool call, so the commit stays with the user.
+See [hooks/README.md](hooks/README.md).
+
 ## Repository layout
 
 ```text
@@ -47,6 +59,7 @@ If `/cmt` conflicts with another command, use `/tab:cmt` in Claude Code.
 ├── .github/                      # CI workflows and review guides
 ├── AGENTS.md                     # Repository instructions for agents
 ├── docs/                         # Astro landing page
+├── hooks/                        # Optional hooks, installed manually
 └── plugins/tab/
     ├── .codex-plugin/
     ├── .claude-plugin/
@@ -62,6 +75,7 @@ Host-specific metadata stays in the matching manifest or `agents/openai.yaml`.
 - Keep both plugin manifests on the same version
 - Run `make test` to test installation with Claude Code and Codex
 - Run `make validate` to validate the repository and plugin manifests
+- Run `make hooks:test` to check the optional hooks
 - Run `make docs:install` once and `make docs` to build the landing page
 - Run `make docs:dev` for Astro or `make docs:up` for Docker preview
 

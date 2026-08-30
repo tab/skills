@@ -1,5 +1,6 @@
 .PHONY: test validate docs
 .PHONY: docs\:install docs\:dev docs\:up docs\:down
+.PHONY: hooks\:install hooks\:test
 
 test:
 	python3 .github/scripts/test-marketplaces.py
@@ -23,3 +24,9 @@ docs\:up:
 
 docs\:down:
 	docker compose -f docs/compose.yaml down
+
+hooks\:install:
+	hooks/install.sh
+
+hooks\:test:
+	hooks/test.sh

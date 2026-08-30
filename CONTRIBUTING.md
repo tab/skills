@@ -28,6 +28,8 @@ make test
 make validate
 ```
 
+Run `make hooks:test` when changing `hooks/`.
+
 Review changes with [the core review guide](.github/CORE_REVIEW.md).
 Use [the code review prompt](.github/CODE_REVIEW_PROMT.md) when an agent runs the review.
 
