@@ -1,6 +1,15 @@
 # Skills
 
-Reusable workflows for Claude Code and Codex
+Usable workflows for Claude Code and Codex
+
+## Skills
+
+| Skill | Description                                                     |
+|-------|-----------------------------------------------------------------|
+| `cmt` | Draft a Conventional Commit message for the current Git changes |
+
+Use `/cmt` in Claude Code or `$cmt` in Codex.
+If `/cmt` conflicts with another command, use `/tab:cmt` in Claude Code.
 
 ## Install
 
@@ -30,7 +39,8 @@ Start a new session after installation.
 ├── AGENTS.md                     # Repository instructions for agents
 └── plugins/tab/
     ├── .codex-plugin/
-    └── .claude-plugin/
+    ├── .claude-plugin/
+    └── skills/                    # Shared skill source
 ```
 
 Claude Code and Codex use the same `SKILL.md` for each skill.

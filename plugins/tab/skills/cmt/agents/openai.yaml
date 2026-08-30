@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cmt"
+  short_description: "Draft a Conventional Commit message"
+  default_prompt: "Use $cmt to draft a Conventional Commit message for the current Git changes."
