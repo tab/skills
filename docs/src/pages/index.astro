@@ -10,14 +10,18 @@ const installs = [
     host: "Claude Code",
     commands: [
       "claude plugin marketplace add tab/skills",
-      "claude plugin install tab@skills",
+      "claude plugin install core@skills",
+      "claude plugin install workflow@skills",
+      "claude plugin install thinking@skills",
     ],
   },
   {
     host: "Codex",
     commands: [
       "codex plugin marketplace add tab/skills",
-      "codex plugin add tab@skills",
+      "codex plugin add core@skills",
+      "codex plugin add workflow@skills",
+      "codex plugin add thinking@skills",
     ],
   },
 ];
@@ -58,7 +62,7 @@ const installs = [
         <div class="hero-copy">
           <h1>Usable skills for Claude Code and Codex</h1>
           <p class="hero-description">
-            Clarify unexpected behavior, draft commit messages, review engineering decisions and improve text.
+            Plan features, clarify unexpected behavior, review decisions and improve text.
           </p>
           <div class="hero-actions">
             <a class="button button-primary" href="#install">Install</a>
@@ -94,7 +98,7 @@ const installs = [
         <div class="skill-grid">
           {skills.map((skill, index) => (
             <article class="skill-card reveal" data-reveal style={`--delay: ${index * 70}ms`}>
-              <div class="skill-number" aria-hidden="true">0{index + 1}</div>
+              <div class="skill-number" aria-hidden="true">{skill.plugin} · 0{index + 1}</div>
               <h3><code>{skill.name}</code></h3>
               <p>
                 {skill.description.map((part) => (
@@ -113,7 +117,7 @@ const installs = [
       <div class="container install-inner">
         <h2 class="install-title reveal" data-reveal>Install</h2>
         <p class="install-description reveal" data-reveal>
-          The first command adds the marketplace and the second installs the plugin.
+          Add the marketplace once, then install all three plugins or only the ones you need.
         </p>
         {installs.map((install, index) => (
           <div class="install-method reveal" data-reveal style={`--delay: ${index * 90}ms`}>

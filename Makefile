@@ -8,7 +8,9 @@ test:
 validate:
 	python3 .github/scripts/validate.py
 	claude plugin validate --strict .
-	claude plugin validate --strict plugins/tab
+	claude plugin validate --strict plugins/core
+	claude plugin validate --strict plugins/workflow
+	claude plugin validate --strict plugins/thinking
 
 docs:
 	npm --prefix docs run build

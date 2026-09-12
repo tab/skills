@@ -1,0 +1,37 @@
+{
+  "name": "thinking",
+  "version": "0.5.0",
+  "description": "Deep engineering decision review for Claude Code and Codex.",
+  "author": {
+    "name": "tab",
+    "url": "https://github.com/tab"
+  },
+  "homepage": "https://tab.github.io/skills/",
+  "repository": "https://github.com/tab/skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "analysis",
+    "review"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Thinking",
+    "shortDescription": "Stress-test important engineering decisions",
+    "longDescription": "Use independent perspectives and peer review to test expensive engineering decisions.",
+    "developerName": "tab",
+    "category": "Productivity",
+    "capabilities": [
+      "Analysis",
+      "Review"
+    ],
+    "websiteURL": "https://tab.github.io/skills/",
+    "defaultPrompt": [
+      "Stress-test this engineering decision."
+    ],
+    "brandColor": "#7C3AED",
+    "composerIcon": "./assets/council.svg",
+    "logo": "./assets/council.svg",
+    "logoDark": "./assets/council.svg"
+  }
+}

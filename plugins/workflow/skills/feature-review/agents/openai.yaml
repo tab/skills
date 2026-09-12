@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Review"
+  short_description: "Review a feature plan, code or PR gate"
+  default_prompt: "Use $feature-review to review this feature at its current gate."

@@ -1,0 +1,38 @@
+{
+  "name": "workflow",
+  "version": "0.1.0",
+  "description": "Feature planning, delivery and review workflows for Claude Code and Codex.",
+  "author": {
+    "name": "tab",
+    "url": "https://github.com/tab"
+  },
+  "homepage": "https://tab.github.io/skills/",
+  "repository": "https://github.com/tab/skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "workflow",
+    "development"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Workflow",
+    "shortDescription": "Plan, build and review software features",
+    "longDescription": "Keep feature scope, plans, progress, deferred work and review gates in clear project artifacts.",
+    "developerName": "tab",
+    "category": "Productivity",
+    "capabilities": [
+      "Analysis",
+      "Editing",
+      "Review"
+    ],
+    "websiteURL": "https://tab.github.io/skills/",
+    "defaultPrompt": [
+      "Plan and track this software feature."
+    ],
+    "brandColor": "#1a7f37",
+    "composerIcon": "./assets/workflow.svg",
+    "logo": "./assets/workflow.svg",
+    "logoDark": "./assets/workflow.svg"
+  }
+}

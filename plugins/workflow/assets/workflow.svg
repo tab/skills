@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title>Workflow with completed, running and queued stages</title>
+  <rect width="256" height="256" rx="56" fill="#f6f8fa"/>
+  <path d="M70 128h116" fill="none" stroke="#d1d9e0" stroke-width="12"/>
+  <circle cx="52" cy="128" r="32" fill="#1a7f37"/>
+  <path d="m37 128 10 10 21-23" fill="none" stroke="#ffffff" stroke-linecap="round"
+    stroke-linejoin="round" stroke-width="9"/>
+  <circle cx="128" cy="128" r="27" fill="#ffffff" stroke="#9a6700" stroke-width="10"/>
+  <circle cx="204" cy="128" r="27" fill="#ffffff" stroke="#d1d9e0" stroke-width="10"/>
+</svg>

@@ -33,12 +33,14 @@ Use [the code review prompt](CODE_REVIEW_PROMT.md) to run this review with an ag
 ## Package consistency
 
 - Marketplace name remains `skills`
-- Plugin name remains `tab`
-- Both plugin manifests use the same version and package metadata
+- Plugin names and folders remain `core`, `workflow` and `thinking`
+- All plugin manifests use the same repository version
+- Claude Code and Codex metadata match for each plugin
 - The version bump matches the change type
 - README and manifest descriptions make the same promise
-- Marketplace entries point to `./plugins/tab`
-- New skills appear in the README in alphabetical order
+- Marketplace entries point to the matching folder under `plugins/`
+- README plugin assignments match the installed skills
+- README skills are grouped by plugin name and sorted by skill name within each group
 - Only marketplace installation is documented
 - Third-party workflow actions use full commit SHAs
 

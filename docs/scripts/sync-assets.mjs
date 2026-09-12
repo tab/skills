@@ -3,7 +3,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const source = fileURLToPath(
-  new URL("../../plugins/tab/assets/toolbox.svg", import.meta.url),
+  new URL("../../plugins/core/assets/toolbox.svg", import.meta.url),
 );
 const target = fileURLToPath(
   new URL("../public/generated/toolbox.svg", import.meta.url),

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature"
+  short_description: "Plan and deliver a feature with controlled scope"
+  default_prompt: "Use $feature to plan and track this software feature."

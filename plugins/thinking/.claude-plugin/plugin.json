@@ -1,0 +1,17 @@
+{
+  "name": "thinking",
+  "version": "0.5.0",
+  "description": "Deep engineering decision review for Claude Code and Codex.",
+  "author": {
+    "name": "tab",
+    "url": "https://github.com/tab"
+  },
+  "homepage": "https://tab.github.io/skills/",
+  "repository": "https://github.com/tab/skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "analysis",
+    "review"
+  ]
+}

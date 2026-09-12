@@ -14,11 +14,12 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 CODEX_MARKETPLACE = ROOT / ".agents/plugins/marketplace.json"
 CLAUDE_MARKETPLACE = ROOT / ".claude-plugin/marketplace.json"
-PLUGIN_ROOT = ROOT / "plugins/tab"
-CODEX_MANIFEST = PLUGIN_ROOT / ".codex-plugin/plugin.json"
-CLAUDE_MANIFEST = PLUGIN_ROOT / ".claude-plugin/plugin.json"
-SKILLS_ROOT = PLUGIN_ROOT / "skills"
+PLUGINS_ROOT = ROOT / "plugins"
 README = ROOT / "README.md"
+REVIEW_AGENT_DEFAULTS = (
+    PLUGINS_ROOT / "workflow" / "skills" / "feature" / "references" / "review-agents.json"
+)
+REVIEW_GATES = {"plan", "code", "pr", "follow-up"}
 
 SHARED_PLUGIN_FIELDS = (
     "name",
@@ -48,12 +49,31 @@ def load_json(path: Path, problems: list[str]) -> dict[str, Any]:
     return value
 
 
-def one_plugin(marketplace: dict[str, Any], path: Path, problems: list[str]) -> dict[str, Any]:
+def marketplace_plugins(
+    marketplace: dict[str, Any], path: Path, problems: list[str]
+) -> list[dict[str, Any]]:
     plugins = marketplace.get("plugins")
-    if not isinstance(plugins, list) or len(plugins) != 1 or not isinstance(plugins[0], dict):
-        problems.append(f"{path.relative_to(ROOT)} must contain one plugin")
-        return {}
-    return plugins[0]
+    if not isinstance(plugins, list) or not plugins:
+        problems.append(f"{path.relative_to(ROOT)} must contain plugins")
+        return []
+
+    valid_plugins: list[dict[str, Any]] = []
+    names: set[str] = set()
+    for plugin in plugins:
+        if not isinstance(plugin, dict):
+            problems.append(f"{path.relative_to(ROOT)} contains an invalid plugin entry")
+            continue
+        name = plugin.get("name")
+        if not isinstance(name, str) or not name:
+            problems.append(f"{path.relative_to(ROOT)} contains a plugin without a name")
+            continue
+        if name in names:
+            problems.append(f"{path.relative_to(ROOT)} contains duplicate plugin: {name}")
+            continue
+        names.add(name)
+        valid_plugins.append(plugin)
+
+    return valid_plugins
 
 
 def frontmatter(path: Path, problems: list[str]) -> dict[str, str]:
@@ -80,14 +100,14 @@ def frontmatter(path: Path, problems: list[str]) -> dict[str, str]:
     return fields
 
 
-def discover_skills(problems: list[str]) -> list[str]:
-    if not SKILLS_ROOT.exists():
+def discover_skills(skills_root: Path, problems: list[str]) -> list[str]:
+    if not skills_root.exists():
         return []
 
     names: list[str] = []
-    for entry in sorted(SKILLS_ROOT.iterdir()):
+    for entry in sorted(skills_root.iterdir()):
         if not entry.is_dir():
-            problems.append(f"unexpected file in {SKILLS_ROOT.relative_to(ROOT)}: {entry.name}")
+            problems.append(f"unexpected file in {skills_root.relative_to(ROOT)}: {entry.name}")
             continue
 
         skill_file = entry / "SKILL.md"
@@ -131,7 +151,7 @@ def check_links(skill_root: Path, problems: list[str]) -> None:
                 problems.append(f"broken link in {markdown.relative_to(ROOT)}: {raw_target}")
 
 
-def readme_skills(problems: list[str]) -> list[str]:
+def readme_skills(problems: list[str]) -> list[tuple[str, str]]:
     try:
         text = README.read_text(encoding="utf-8")
     except FileNotFoundError:
@@ -141,64 +161,202 @@ def readme_skills(problems: list[str]) -> list[str]:
     section = re.search(r"^## Skills\n(.*?)(?=^## |\Z)", text, re.MULTILINE | re.DOTALL)
     if not section:
         return []
-    return re.findall(r"^\|\s*`([^`]+)`\s*\|", section.group(1), re.MULTILINE)
+    return re.findall(
+        r"^\|\s*`([^`]+)`\s*\|\s*`([^`]+)`\s*\|",
+        section.group(1),
+        re.MULTILINE,
+    )
+
+
+def validate_review_agent_defaults(problems: list[str]) -> None:
+    config = load_json(REVIEW_AGENT_DEFAULTS, problems)
+    if not config:
+        return
+
+    allowed_fields = {"version", "default", "reviewers"}
+    unknown_fields = set(config) - allowed_fields
+    if unknown_fields:
+        problems.append(
+            "review agent defaults contain unknown fields: " + ", ".join(sorted(unknown_fields))
+        )
+
+    if type(config.get("version")) is not int or config["version"] != 1:
+        problems.append("review agent defaults must use version 1")
+
+    default = config.get("default")
+    if not isinstance(default, dict):
+        problems.append("review agent defaults must contain a default object")
+        return
+    unknown_default_fields = set(default) - {"reviewer", "gates"}
+    if unknown_default_fields:
+        problems.append(
+            "review agent default contains unknown fields: "
+            + ", ".join(sorted(unknown_default_fields))
+        )
+    if set(default) != {"reviewer", "gates"}:
+        problems.append("review agent default must contain reviewer and gates")
+
+    reviewers = config.get("reviewers")
+    if not isinstance(reviewers, dict):
+        problems.append("review agent defaults must contain a reviewers object")
+        return
+
+    default_reviewer = default.get("reviewer")
+    if not isinstance(default_reviewer, str) or not default_reviewer.strip():
+        problems.append("review agent default must use a non-empty reviewer")
+    elif default_reviewer in reviewers:
+        problems.append("default reviewer must not be repeated in reviewers")
+
+    default_gates = default.get("gates")
+    if not isinstance(default_gates, dict) or set(default_gates) != REVIEW_GATES:
+        problems.append("review agent default must configure every review gate")
+        default_gates = {}
+
+    def validate_settings(settings: Any, label: str) -> dict[str, str]:
+        if not isinstance(settings, dict) or not settings:
+            problems.append(f"{label} must set model, effort or both")
+            return {}
+        unknown = set(settings) - {"model", "effort"}
+        if unknown:
+            problems.append(f"{label} contains unknown fields: " + ", ".join(sorted(unknown)))
+        valid: dict[str, str] = {}
+        for field in ("model", "effort"):
+            if field not in settings:
+                continue
+            value = settings[field]
+            if not isinstance(value, str) or not value.strip():
+                problems.append(f"{label} must use a non-empty {field}")
+            else:
+                valid[field] = value
+        return valid
+
+    validated_default_gates = {
+        gate: validate_settings(settings, f"default gate {gate}")
+        for gate, settings in default_gates.items()
+        if gate in REVIEW_GATES
+    }
+    for gate, settings in validated_default_gates.items():
+        if set(settings) != {"model", "effort"}:
+            problems.append(f"default gate {gate} must set model and effort")
+
+    for reviewer, reviewer_config in reviewers.items():
+        if not isinstance(reviewer, str) or not reviewer:
+            problems.append("review agent defaults contain an invalid reviewer name")
+            continue
+        if not isinstance(reviewer_config, dict) or set(reviewer_config) != {"gates"}:
+            problems.append(f"reviewer {reviewer} must contain only gates")
+            continue
+
+        gates = reviewer_config.get("gates")
+        if not isinstance(gates, dict) or not gates:
+            problems.append(f"reviewer {reviewer} gates must be a non-empty object")
+            continue
+        unknown_gates = set(gates) - REVIEW_GATES
+        if unknown_gates:
+            problems.append(
+                f"reviewer {reviewer} contains unknown gates: "
+                + ", ".join(sorted(unknown_gates))
+            )
+
+        validated_gates = {
+            gate: validate_settings(settings, f"reviewer {reviewer} gate {gate}")
+            for gate, settings in gates.items()
+            if gate in REVIEW_GATES
+        }
+        for gate in REVIEW_GATES:
+            resolved = dict(validated_default_gates.get(gate, {}))
+            resolved.update(validated_gates.get(gate, {}))
+            if set(resolved) != {"model", "effort"}:
+                problems.append(f"reviewer {reviewer} gate {gate} must resolve model and effort")
 
 
 def validate() -> list[str]:
     problems: list[str] = []
+    validate_review_agent_defaults(problems)
     codex_marketplace = load_json(CODEX_MARKETPLACE, problems)
     claude_marketplace = load_json(CLAUDE_MARKETPLACE, problems)
-    codex_manifest = load_json(CODEX_MANIFEST, problems)
-    claude_manifest = load_json(CLAUDE_MANIFEST, problems)
-
-    codex_plugin = one_plugin(codex_marketplace, CODEX_MARKETPLACE, problems)
-    claude_plugin = one_plugin(claude_marketplace, CLAUDE_MARKETPLACE, problems)
+    codex_plugins = marketplace_plugins(codex_marketplace, CODEX_MARKETPLACE, problems)
+    claude_plugins = marketplace_plugins(claude_marketplace, CLAUDE_MARKETPLACE, problems)
 
     if codex_marketplace.get("name") != claude_marketplace.get("name"):
         problems.append("Claude Code and Codex marketplace names must match")
 
-    for field in SHARED_PLUGIN_FIELDS:
-        if codex_manifest.get(field) != claude_manifest.get(field):
-            problems.append(f"plugin manifest field must match: {field}")
+    codex_names = [plugin["name"] for plugin in codex_plugins]
+    claude_names = [plugin["name"] for plugin in claude_plugins]
+    if codex_names != claude_names:
+        problems.append("Claude Code and Codex marketplace plugins must match in order")
 
-    plugin_name = codex_manifest.get("name")
-    if plugin_name != PLUGIN_ROOT.name:
-        problems.append("plugin manifest name must match the plugin folder")
-    if codex_plugin.get("name") != plugin_name or claude_plugin.get("name") != plugin_name:
-        problems.append("marketplace plugin names must match the plugin manifest")
+    plugin_dirs = sorted(path.name for path in PLUGINS_ROOT.iterdir() if path.is_dir())
+    if sorted(codex_names) != plugin_dirs:
+        problems.append("marketplace plugins must match the plugin directories")
 
-    codex_source = codex_plugin.get("source")
-    codex_path = codex_source.get("path") if isinstance(codex_source, dict) else None
-    claude_path = claude_plugin.get("source")
-    if codex_path != claude_path:
-        problems.append("Claude Code and Codex marketplace plugin paths must match")
-    elif isinstance(codex_path, str):
-        source_path = (ROOT / codex_path).resolve()
-        if source_path != PLUGIN_ROOT.resolve() or not source_path.is_dir():
-            problems.append("marketplace plugin path must point to the plugin folder")
-    else:
-        problems.append("marketplace plugin path is missing")
+    claude_by_name = {plugin["name"]: plugin for plugin in claude_plugins}
+    skill_plugins: list[tuple[str, str]] = []
+    versions: set[str] = set()
+    for codex_plugin in codex_plugins:
+        plugin_name = codex_plugin["name"]
+        plugin_root = PLUGINS_ROOT / plugin_name
+        codex_manifest = load_json(plugin_root / ".codex-plugin/plugin.json", problems)
+        claude_manifest = load_json(plugin_root / ".claude-plugin/plugin.json", problems)
+        claude_plugin = claude_by_name.get(plugin_name, {})
 
-    skills = discover_skills(problems)
+        for field in SHARED_PLUGIN_FIELDS:
+            if codex_manifest.get(field) != claude_manifest.get(field):
+                problems.append(f"{plugin_name} manifest field must match: {field}")
+
+        if codex_manifest.get("name") != plugin_root.name:
+            problems.append(f"{plugin_name} manifest name must match the plugin folder")
+        if claude_manifest.get("name") != plugin_name:
+            problems.append(f"{plugin_name} Claude manifest name must match the plugin folder")
+        if claude_plugin.get("description") != codex_manifest.get("description"):
+            problems.append(f"{plugin_name} marketplace description must match the manifest")
+
+        codex_source = codex_plugin.get("source")
+        codex_path = codex_source.get("path") if isinstance(codex_source, dict) else None
+        claude_path = claude_plugin.get("source")
+        if codex_path != claude_path:
+            problems.append(f"{plugin_name} marketplace paths must match")
+        elif isinstance(codex_path, str):
+            source_path = (ROOT / codex_path).resolve()
+            if source_path != plugin_root.resolve() or not source_path.is_dir():
+                problems.append(f"{plugin_name} marketplace path must point to its plugin folder")
+        else:
+            problems.append(f"{plugin_name} marketplace path is missing")
+
+        skills = discover_skills(plugin_root / "skills", problems)
+        skill_plugins.extend((skill, plugin_name) for skill in skills)
+
+        skills_path = codex_manifest.get("skills")
+        if skills and skills_path != "./skills/":
+            problems.append(f"{plugin_name} Codex manifest must use ./skills/")
+        if not skills and skills_path is not None:
+            problems.append(f"{plugin_name} Codex manifest must omit skills")
+
+        version = codex_manifest.get("version")
+        if not isinstance(version, str) or not re.fullmatch(r"\d+\.\d+\.\d+", version):
+            problems.append(f"{plugin_name} version must use semantic versioning")
+        else:
+            versions.add(version)
+
     documented_skills = readme_skills(problems)
-    if documented_skills != sorted(documented_skills):
-        problems.append("README skills must be sorted alphabetically")
-    if documented_skills != skills:
+    sort_key = lambda item: (item[1], item[0])
+    if documented_skills != sorted(documented_skills, key=sort_key):
+        problems.append("README skills must be sorted by plugin and skill name")
+    if documented_skills != sorted(skill_plugins, key=sort_key):
         problems.append("README skills must match the plugin skills")
 
-    skills_path = codex_manifest.get("skills")
-    if skills and skills_path != "./skills/":
-        problems.append("Codex plugin manifest must use ./skills/ when skills exist")
-    if not skills and skills_path is not None:
-        problems.append("Codex plugin manifest must omit skills when the plugin is empty")
+    skill_names = [skill for skill, _ in skill_plugins]
+    if len(skill_names) != len(set(skill_names)):
+        problems.append("skill names must be unique across plugins")
 
-    version = codex_manifest.get("version")
-    if not isinstance(version, str) or not re.fullmatch(r"\d+\.\d+\.\d+", version):
-        problems.append("plugin version must use semantic versioning")
+    if len(versions) > 1:
+        problems.append("all plugin manifests must use the same version")
 
     release_tag = os.environ.get("RELEASE_TAG")
-    if release_tag and release_tag != f"v{version}":
-        problems.append(f"release tag must be v{version}, got {release_tag}")
+    if release_tag and len(versions) == 1:
+        version = next(iter(versions))
+        if release_tag != f"v{version}":
+            problems.append(f"release tag must be v{version}, got {release_tag}")
 
     return problems
 
@@ -211,8 +369,9 @@ def main() -> int:
             print(f"- {problem}", file=sys.stderr)
         return 1
 
-    skill_count = len(discover_skills([]))
-    print(f"Repository validation passed ({skill_count} skills)")
+    plugin_roots = [path for path in PLUGINS_ROOT.iterdir() if path.is_dir()]
+    skill_count = sum(len(discover_skills(path / "skills", [])) for path in plugin_roots)
+    print(f"Repository validation passed ({len(plugin_roots)} plugins, {skill_count} skills)")
     return 0
 
 

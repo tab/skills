@@ -1,7 +1,7 @@
 {
-  "name": "tab",
-  "version": "0.5.0",
-  "description": "Usable workflows for Claude Code and Codex.",
+  "name": "workflow",
+  "version": "0.1.0",
+  "description": "Feature planning, delivery and review workflows for Claude Code and Codex.",
   "author": {
     "name": "tab",
     "url": "https://github.com/tab"
@@ -11,7 +11,7 @@
   "license": "MIT",
   "keywords": [
     "skills",
-    "workflows",
-    "productivity"
+    "workflow",
+    "development"
   ]
 }

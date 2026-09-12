@@ -7,7 +7,7 @@ COPY docs/package.json docs/package-lock.json ./docs/
 RUN cd docs && npm ci
 
 COPY docs/ ./docs/
-COPY plugins/tab/assets/toolbox.svg ./plugins/tab/assets/toolbox.svg
+COPY plugins/core/assets/toolbox.svg ./plugins/core/assets/toolbox.svg
 
 RUN cd docs && npm run build
 

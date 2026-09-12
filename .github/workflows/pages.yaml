@@ -6,8 +6,7 @@ on:
     paths:
       - .github/workflows/pages.yaml
       - docs/**
-      - plugins/tab/assets/toolbox.svg
-      - plugins/tab/skills/**
+      - plugins/**
   workflow_dispatch:
 
 concurrency:

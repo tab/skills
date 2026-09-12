@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Backfill"
+  short_description: "Restore feature docs from repository history"
+  default_prompt: "Use $feature-backfill to reconstruct feature artifacts from this repository's past work."

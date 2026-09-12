@@ -6,9 +6,25 @@
   },
   "plugins": [
     {
-      "name": "tab",
-      "source": "./plugins/tab",
-      "description": "Usable workflows for Claude Code and Codex.",
+      "name": "core",
+      "source": "./plugins/core",
+      "description": "Shared daily skills for Claude Code and Codex.",
+      "author": {
+        "name": "tab"
+      }
+    },
+    {
+      "name": "workflow",
+      "source": "./plugins/workflow",
+      "description": "Feature planning, delivery and review workflows for Claude Code and Codex.",
+      "author": {
+        "name": "tab"
+      }
+    },
+    {
+      "name": "thinking",
+      "source": "./plugins/thinking",
+      "description": "Deep engineering decision review for Claude Code and Codex.",
       "author": {
         "name": "tab"
       }

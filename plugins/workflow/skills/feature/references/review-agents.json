@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "default": {
+    "reviewer": "codex",
+    "gates": {
+      "plan": {
+        "model": "gpt-5.6-terra",
+        "effort": "high"
+      },
+      "code": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "pr": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "follow-up": {
+        "model": "gpt-5.6-luna",
+        "effort": "medium"
+      }
+    }
+  },
+  "reviewers": {
+    "claude": {
+      "gates": {
+        "plan": {
+          "model": "opus"
+        },
+        "code": {
+          "model": "opus"
+        },
+        "pr": {
+          "model": "sonnet"
+        },
+        "follow-up": {
+          "model": "sonnet"
+        }
+      }
+    }
+  }
+}

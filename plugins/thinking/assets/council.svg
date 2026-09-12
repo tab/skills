@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title>Five-advisor council network</title>
+  <rect width="256" height="256" rx="56" fill="#f6f8fa"/>
+  <g fill="none" stroke="#d1d9e0" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 58 188 102 165 174H91l-23-72z" stroke-width="10"/>
+    <path d="M128 58v70m60-26-60 26m37 46-37-46m-37 46 37-46m-60-26 60 26" stroke-width="8"/>
+  </g>
+  <g stroke="#d1d9e0" stroke-width="9">
+    <circle cx="128" cy="58" r="23" fill="#cf222e"/>
+    <circle cx="188" cy="102" r="23" fill="#0969da"/>
+    <circle cx="165" cy="174" r="23" fill="#1a7f37"/>
+    <circle cx="91" cy="174" r="23" fill="#8250df"/>
+    <circle cx="68" cy="102" r="23" fill="#9a6700"/>
+  </g>
+  <circle cx="128" cy="128" r="20" fill="#24292f" stroke="#d1d9e0" stroke-width="9"/>
+</svg>

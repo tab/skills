@@ -1,0 +1,4 @@
+interface:
+  display_name: "Backlog"
+  short_description: "Track deferred work and closed decisions"
+  default_prompt: "Use $backlog to capture or update this project follow-up."
