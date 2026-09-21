@@ -292,7 +292,7 @@ def validate() -> list[str]:
 
     claude_by_name = {plugin["name"]: plugin for plugin in claude_plugins}
     skill_plugins: list[tuple[str, str]] = []
-    versions: set[str] = set()
+    versions: dict[str, str] = {}
     for codex_plugin in codex_plugins:
         plugin_name = codex_plugin["name"]
         plugin_root = PLUGINS_ROOT / plugin_name
@@ -336,7 +336,7 @@ def validate() -> list[str]:
         if not isinstance(version, str) or not re.fullmatch(r"\d+\.\d+\.\d+", version):
             problems.append(f"{plugin_name} version must use semantic versioning")
         else:
-            versions.add(version)
+            versions[plugin_name] = version
 
     documented_skills = readme_skills(problems)
     sort_key = lambda item: (item[1], item[0])
@@ -349,14 +349,9 @@ def validate() -> list[str]:
     if len(skill_names) != len(set(skill_names)):
         problems.append("skill names must be unique across plugins")
 
-    if len(versions) > 1:
-        problems.append("all plugin manifests must use the same version")
-
     release_tag = os.environ.get("RELEASE_TAG")
-    if release_tag and len(versions) == 1:
-        version = next(iter(versions))
-        if release_tag != f"v{version}":
-            problems.append(f"release tag must be v{version}, got {release_tag}")
+    if release_tag and release_tag not in {f"{name}-v{version}" for name, version in versions.items()}:
+        problems.append(f"release tag must be <plugin>-v<version> for a current plugin version, got {release_tag}")
 
     return problems
 

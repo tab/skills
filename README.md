@@ -106,7 +106,7 @@ Host-specific metadata stays in the matching manifest or `agents/openai.yaml`.
 ## Developer notes
 
 - Add new skills under `plugins/<plugin-name>/skills/`
-- Keep every plugin manifest on the same repository release version
+- Bump the version of each changed plugin in both of its manifests
 - Run `make test` to test installation with Claude Code and Codex
 - Run `make validate` to validate the repository and plugin manifests
 - Run `make hooks:test` to check the optional hooks

@@ -34,7 +34,7 @@ Use [the code review prompt](CODE_REVIEW_PROMT.md) to run this review with an ag
 
 - Marketplace name remains `skills`
 - Plugin names and folders remain `core`, `workflow` and `thinking`
-- All plugin manifests use the same repository version
+- Both manifests of each plugin use the same version
 - Claude Code and Codex metadata match for each plugin
 - The version bump matches the change type
 - README and manifest descriptions make the same promise

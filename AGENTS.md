@@ -58,11 +58,11 @@ Each skill has one shared source under `plugins/<plugin-name>/skills/<skill-name
 
 ## Versioning
 
-- Keep all plugin manifests on the same repository version
+- Version each plugin on its own, and keep its Claude Code and Codex manifests on the same version
 - Bump the major version for an incompatible change, such as removing or renaming a skill
 - Bump the minor version for a new skill or a new feature
 - Bump the patch version for a fix or another change that keeps current behavior
-- Bump the version in its own commit, separate from the change it releases
+- Bump only the plugins the change touches, in their own commit, separate from the change it releases
 - Leave the version alone when the change does not affect what users install or run
 - Size the bump from the change, since earlier releases used a minor bump for everything
 

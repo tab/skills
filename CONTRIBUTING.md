@@ -8,7 +8,7 @@
 4. Open a pull request
 5. Wait for `checks.yaml` and complete the code review
 6. Merge the pull request and confirm the `master` checks pass
-7. Create a `v<version>` release when the change should be released
+7. Create a `<plugin>-v<version>` release for each changed plugin when the change should be released
 
 ## Add or change a skill
 
@@ -25,7 +25,7 @@ Do not put a skill in `core` only because it is useful.
 3. Use a lowercase hyphenated `name` and a short specific `description` in `SKILL.md`
 4. Keep the main workflow in `SKILL.md` and move detailed conditional guidance to `references/`
 5. Add `agents/openai.yaml` when Codex UI metadata helps users find the skill
-6. Bump the repository version in every plugin manifest when an installed skill changes
+6. Bump the plugin version in both of its manifests when an installed skill changes
 
 Do not include credentials, internal URLs or environment-specific paths.
 
@@ -101,19 +101,20 @@ Use `make docs:down` to stop it.
 
 ## Versioning
 
-All plugin manifests carry the same repository version and follow [semantic versioning](https://semver.org/):
+Each plugin carries its own version in both of its manifests and follows [semantic versioning](https://semver.org/):
 
 - **Major** – an incompatible change, such as removing or renaming a skill
 - **Minor** – a new skill or a new feature
 - **Patch** – a fix or another change that keeps current behavior
 
-Bump the version in its own commit, separate from the change it releases.
+Bump only the plugins the change touches, in their own commit, separate from the change it releases.
+A release tag names one plugin and its version, such as `core-v1.1.0`.
 A change that does not affect what users install or run, such as contributor documentation or CI, needs no bump.
 
 ## Release checklist
 
 - Review the full diff
-- Bump every plugin manifest to match the change type
+- Bump each changed plugin to match the change type
 - Run `make test`
 - Run `make validate`
 - Install each changed plugin from the `skills` marketplace and test its changed skills in a new session
