@@ -18,6 +18,46 @@ PLUGINS_ROOT = ROOT / "plugins"
 REVIEW_RESOLVER = (
     PLUGINS_ROOT / "workflow" / "skills" / "feature" / "scripts" / "resolve-review-agent.py"
 )
+REFLOW = PLUGINS_ROOT / "core" / "skills" / "humanify" / "scripts" / "reflow.py"
+REFLOW_SOURCE = """\
+---
+title: Sample
+---
+
+# Heading
+
+Short paragraph. Second sentence.
+
+Run `ls  -la` to list the files, and keep the double space in the command exact. Then check the output of the command. Then stop.
+
+Line with a hard break\x20\x20
+kept on the next line. Second sentence of the same paragraph that is long enough to pass the width limit.
+
+- A list item with a first sentence that is long enough to pass the width. Then a second sentence. Then a third
+  one that continues on the next line.
+* Star item one
+* Star item two
+
+[docs]: https://example.com/docs
+See [docs] for the long version of this paragraph, and note that the definition above must stay on its own line.
+
+<pre>
+alpha   beta
+gamma   delta
+</pre>
+
+    indented code
+
+| Column | Value |
+|--------|-------|
+
+```text
+fenced. Code stays.
+```
+"""
+REFLOW_EXPECTED = REFLOW_SOURCE.replace("exact. Then check", "exact.\nThen check").replace(
+    "sentence. Then a third\n  one", "sentence.\n  Then a third one"
+)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -200,6 +240,26 @@ def test_review_config() -> None:
     print("Review config resolver tests passed")
 
 
+def test_reflow() -> None:
+    with tempfile.TemporaryDirectory(prefix="skills-reflow-") as test_dir:
+        sample = Path(test_dir) / "sample.md"
+        sample.write_text(REFLOW_SOURCE, encoding="utf-8")
+        for attempt in ("first", "second"):
+            result = subprocess.run(
+                [sys.executable, str(REFLOW), "--width", "100", str(sample)],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"reflow failed on the {attempt} run: {result.stderr.strip()}")
+            reflowed = sample.read_text(encoding="utf-8")
+            if reflowed != REFLOW_EXPECTED:
+                raise RuntimeError(f"unexpected reflow result on the {attempt} run:\n{reflowed}")
+
+    print("Reflow tests passed")
+
+
 def test_claude(plugins: list[dict[str, Any]]) -> None:
     with tempfile.TemporaryDirectory(prefix="skills-claude-") as config_dir:
         env = os.environ.copy()
@@ -267,6 +327,7 @@ def main() -> int:
             raise RuntimeError(f"required command not found: {command}")
 
     test_review_config()
+    test_reflow()
 
     codex_marketplace = load_json(ROOT / ".agents/plugins/marketplace.json")
     marketplace_name = codex_marketplace["name"]
