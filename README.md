@@ -31,6 +31,30 @@ Start a new session after installation.
 `core` and `workflow` cover daily feature work.
 `thinking` adds the optional `council` workflow for important decisions.
 
+## Upgrade
+
+Claude Code:
+
+```bash
+claude plugin marketplace update skills
+
+claude plugin update core@skills
+claude plugin update thinking@skills
+claude plugin update workflow@skills
+```
+
+Codex:
+
+```bash
+codex plugin marketplace upgrade skills
+
+codex plugin add core@skills
+codex plugin add thinking@skills
+codex plugin add workflow@skills
+```
+
+Start a new session after upgrading.
+
 ## Skills
 
 | Skill              | Plugin     | Description                                                            |
