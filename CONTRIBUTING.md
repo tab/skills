@@ -68,7 +68,7 @@ codex \
   --model <model> \
   -c 'model_reasoning_effort="medium"' \
   --add-dir <skills-repo> \
-  -c 'skills.config=[{path="<skills-repo>/plugins/workflow/skills/feature-review/SKILL.md",enabled=true}]'
+  -c 'skills.config=[{path="<skills-repo>/plugins/workflow/skills/feature/SKILL.md",enabled=true}]'
 ```
 
 For a non-interactive test, put the shared options before `exec` and add `--ephemeral` after it.

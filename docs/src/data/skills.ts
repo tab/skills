@@ -38,6 +38,11 @@ export const skills: Skill[] = [
     description: [{ text: "Stress-test an engineering decision with five independent views" }],
   },
   {
+    name: "coverage",
+    plugin: "workflow",
+    description: [{ text: "Raise test coverage to tiers by testability" }],
+  },
+  {
     name: "feature",
     plugin: "workflow",
     description: [{ text: "Plan and deliver a feature with clear scope and durable context" }],
@@ -46,11 +51,6 @@ export const skills: Skill[] = [
     name: "feature-backfill",
     plugin: "workflow",
     description: [{ text: "Restore feature artifacts from repository history" }],
-  },
-  {
-    name: "feature-review",
-    plugin: "workflow",
-    description: [{ text: "Review a feature plan, implementation or PR against its contract" }],
   },
   {
     name: "humanify",

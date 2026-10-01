@@ -1,10 +1,11 @@
-# Review perspectives
+# Risk review
 
-Use this guide when a plan or code gate needs more than the standard general review.
-Do not use it for the PR gate.
+Read this when a plan or code gate needs more than the standard general review: a second reviewer focused on one named risk.
 
-When the human asks for a stress PR review, explain that the mode applies only to plan and code gates.
-Ask them to choose a standard PR review or a stress code review on the PR diff followed by the standard PR gate.
+Do not use it for the PR review.
+
+When the human asks for a PR risk review, explain that the mode applies only to plan and code gates, before the PR opens.
+The PR review stays standard.
 Do not silently downgrade the request or start an extra PR reviewer.
 
 ## Choose the mode
@@ -12,7 +13,7 @@ Do not silently downgrade the request or start an extra PR reviewer.
 Use `standard` review by default.
 It starts one general reviewer.
 
-Use `stress` review when the human requests it or one named risk could cause a blocker or major issue:
+Use a risk review when the human requests it or one named risk could cause a blocker or major issue:
 
 - Security, privacy or authorization
 - Data migration, corruption or loss
@@ -20,8 +21,8 @@ Use `stress` review when the human requests it or one named risk could cause a b
 - Concurrency or distributed behavior
 - Cross-cutting integration
 
-After a review stops on a disputed blocker or major, only the human may start a new stress review.
-Do not use stress review only because a change is large or unfamiliar.
+After a review stops on a disputed finding, only the human may start a new risk review.
+Do not use a risk review only because a change is large or unfamiliar.
 
 ## Select one risk perspective
 
@@ -33,13 +34,13 @@ For example, use `authorization boundaries`, `migration rollback`, `API compatib
 `cross-service failure handling`.
 
 Record the selected perspective before launch and keep it fixed for that gate.
-Stress review has exactly two perspectives: `general` and the named risk perspective.
+A risk review has exactly two perspectives: `general` and the named risk perspective.
 
 ## Start independent reviews
 
 Give both reviewers the same target, feature artifacts and evidence boundary.
 Tell each reviewer its perspective and do not give it the other reviewer's findings.
-For a stress code review, pass this baseline directly to each reviewer.
+For a code risk review, pass this baseline directly to each reviewer.
 Do not ask either reviewer to read the combined `code-review.md` file.
 
 Run both reviews at the same time when the host supports it.
@@ -51,10 +52,10 @@ Use another configured reviewer only when the human selects it.
 
 For a plan gate, use:
 
-- `Plan review – in review (stress: general + <risk perspective>)`
+- `Plan review – in review (risk review: general + <risk perspective>)`
 
-For a code gate, use the stress active-state format from the `feature-review` code review handoff.
-Stress reviewers do not write the combined handoff directly.
+For a code gate, use the active-state format of [the code risk review](#code-risk-review).
+Risk reviewers do not write the combined handoff directly.
 
 If either required review cannot start or finish, keep any returned evidence and make the combined verdict `INCOMPLETE`.
 Do not replace the missing perspective with the active development session.
@@ -64,7 +65,7 @@ Do not replace the missing perspective with the active development session.
 General findings use IDs such as `PLAN-G1` and `CODE-G1`.
 Risk findings use IDs such as `PLAN-R1` and `CODE-R1`.
 
-Every stress finding includes an immutable `Source` value:
+Every risk review finding includes an immutable `Source` value:
 
 ```markdown
 Source: general
@@ -81,7 +82,7 @@ Copy each returned finding without changing its ID, source, severity, evidence, 
 Keep duplicate findings until disposition and use replies to link them when one fix addresses both.
 
 Do not ask another agent to synthesize or verify the results.
-Each reviewer verifies its own findings through the main `feature-review` rules.
+Each reviewer verifies its own findings through [the finding checks](3-findings.md#check-a-finding-before-publishing-it).
 Do not use reviewer votes or drop a unique finding because the other reviewer passed.
 
 Derive the combined verdict in this order:
@@ -104,4 +105,45 @@ The reviewer keeps its source-specific IDs and returns only its updated source r
 The primary agent copies that result into the combined handoff and recalculates the combined verdict.
 
 Apply the normal convergence rule to each perspective.
-When a disputed blocker or major repeats without answering the reply or adding material evidence, stop and ask the human.
+When a disputed finding of any severity repeats without answering the reply or adding material evidence, stop and ask the human.
+
+## Code risk review
+
+The primary agent owns `code-review.md` during a code risk review.
+Both reviewers are read-only for this file and return only their assigned perspective result.
+They receive the target, artifacts and evidence boundary from the caller and do not read this combined file.
+
+Start with:
+
+```markdown
+# Code review
+
+Mode: risk review
+Gate: code
+Status: in review
+Target: <exact diff range or working tree>
+General status: in review
+General round: 1
+General reviewer: <resolved reviewer>
+General model: <resolved model>
+General effort: <resolved effort>
+Risk perspective: <named perspective>
+Risk status: in review
+Risk round: 1
+Risk reviewer: <resolved reviewer>
+Risk model: <resolved model>
+Risk effort: <resolved effort>
+```
+
+Each reviewer returns its source, findings, checked evidence and verdict.
+The primary agent copies each finding without changing its content and keeps checked evidence under `General` and the named risk
+perspective.
+
+Update each source status when its result returns.
+Keep the overall status `in review` while either result is still running.
+After both return, map the combined verdict to the overall file status through
+[the file statuses](../writing/code-review.md#first-review).
+If either result is incomplete, set the overall status to `incomplete` and keep any returned findings and evidence.
+
+For a focused risk review follow-up, change only the matching source status to `in review` and increment only its round.
+Keep the other source result unchanged.

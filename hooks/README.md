@@ -10,7 +10,8 @@ It matters most when commits are signed, since the agent cannot reach the signin
 The hook matches `git commit` at a command position, so `git add . && git commit` is caught along with a plain call.
 It also matches the `git -C <dir>` and `git -c <key>=<value>` forms.
 Nothing else is blocked: `git status`, `git log`, `git push`, a `grep` for the phrase and a command that writes a `git commit` line into a document all run as usual.
-A command that carries `--no-gpg-sign` runs too, for the times an unsigned commit is allowed.
+A command that carries `--no-gpg-sign` runs too, for the times an unsigned commit is allowed,
+such as the checkpoint and rewrite commits of the `feature` workflow.
 
 ## Install
 

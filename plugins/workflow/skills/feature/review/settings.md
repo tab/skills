@@ -1,13 +1,13 @@
-# Review agent configuration
+# Settings
 
-Use this guide only when the `feature` workflow starts an independent plan, code, PR or focused follow-up review.
+Read this only when the `feature` workflow starts an independent plan, code, PR or focused follow-up review.
 
 ## Boundary
 
 The configuration applies only to a new review agent or session.
 It must not change the active development session or a host's normal project settings.
 
-The bundled defaults are in [review-agents.json](review-agents.json).
+The bundled defaults are in [settings.json](settings.json).
 Codex is the default reviewer, but the user may choose another configured reviewer.
 
 ## Resolve the configuration
@@ -57,8 +57,8 @@ An override never changes the selected reviewer.
   "version": 1,
   "gates": {
     "code": {
-      "model": "gpt-5.6-sol",
-      "effort": "high"
+      "model": "gpt-6.1-sol",
+      "effort": "xhigh"
     },
     "pr": {
       "effort": "low"

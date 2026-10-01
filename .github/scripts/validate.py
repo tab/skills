@@ -17,7 +17,7 @@ CLAUDE_MARKETPLACE = ROOT / ".claude-plugin/marketplace.json"
 PLUGINS_ROOT = ROOT / "plugins"
 README = ROOT / "README.md"
 REVIEW_AGENT_DEFAULTS = (
-    PLUGINS_ROOT / "workflow" / "skills" / "feature" / "references" / "review-agents.json"
+    PLUGINS_ROOT / "workflow" / "skills" / "feature" / "review" / "settings.json"
 )
 REVIEW_GATES = {"plan", "code", "pr", "follow-up"}
 

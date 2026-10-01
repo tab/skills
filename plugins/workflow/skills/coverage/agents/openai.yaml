@@ -1,0 +1,4 @@
+interface:
+  display_name: "Coverage"
+  short_description: "Raise test coverage to tiers by testability"
+  default_prompt: "Use $coverage to raise test coverage for this change."

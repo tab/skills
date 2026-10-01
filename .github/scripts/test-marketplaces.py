@@ -122,10 +122,10 @@ def test_review_config() -> None:
 
         expected_defaults = {
             "codex": {
-                "plan": ("gpt-5.6-terra", "high"),
-                "code": ("gpt-5.6-luna", "high"),
-                "pr": ("gpt-5.6-luna", "high"),
-                "follow-up": ("gpt-5.6-luna", "medium"),
+                "plan": ("gpt-6.1-sol", "high"),
+                "code": ("gpt-6.1-sol", "high"),
+                "pr": ("gpt-6.1-sol", "medium"),
+                "follow-up": ("gpt-6-luna", "high"),
             },
             "claude": {
                 "plan": ("opus", "high"),
@@ -158,7 +158,7 @@ def test_review_config() -> None:
             json.dumps(
                 {
                     "version": 1,
-                    "gates": {"code": {"model": "gpt-5.6-sol", "effort": "low"}},
+                    "gates": {"code": {"model": "gpt-6-luna", "effort": "low"}},
                 }
             ),
             encoding="utf-8",
@@ -167,7 +167,7 @@ def test_review_config() -> None:
         if code_review != {
             "effort": "low",
             "gate": "code",
-            "model": "gpt-5.6-sol",
+            "model": "gpt-6-luna",
             "reviewer": "codex",
             "sources": ["default", ".codex/feature-review.json"],
         }:

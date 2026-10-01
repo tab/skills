@@ -15,19 +15,25 @@ stateDiagram-v2
     [*] --> FEATURE
     FEATURE --> PLAN: Human approves
     PLAN --> BUILD: Review passes and human approves
-    BUILD --> CODE_REVIEW: Human accepts build
+    BUILD --> CODE_REVIEW: Steps and checks finish
     CODE_REVIEW --> CODE_REVIEW: Fix and recheck
     CODE_REVIEW --> PR_REVIEW: Review passes and human continues
-    PR_REVIEW --> PR_REVIEW: Fix, push, CI and recheck
-    PR_REVIEW --> RELEASE: Review and final CI pass, human continues
+    PR_REVIEW --> PR_REVIEW: Fix commit, push and CI
+    PR_REVIEW --> RELEASE: Human approves the merge
     RELEASE --> [*]: Merge and rollout approved and verified
 ```
 
 The primary agent completes one phase per response and stops at its boundary.
+Plan approval is the exception: the build runs straight into the code gate, and the next stop comes when that gate passes
+or [needs the human](flow/approvals.md#run-the-build-and-the-code-gate-as-one-stretch).
 `LGTM`, `continue` or `next` approves that result and enters only the next eligible phase.
 
 A question or correction does not advance the flow.
-A scope, plan, code or PR change reopens the earliest affected phase and its downstream gates.
+Before the PR opens, a scope, plan or code change reopens the earliest affected phase and its downstream gates.
+
+The files stop at the PR.
+Their last update comes before the push: `Status: implemented` and a passed code gate.
+After the PR opens, a fix is a normal commit pushed to the PR, and no file changes.
 
 ## Human checkpoints
 
@@ -35,48 +41,75 @@ The human controls:
 
 - Feature scope and important trade-offs
 - The reviewed implementation plan
-- Disputed medium findings and accepted risks
-- Every branch, commit, push and PR action requested by the workflow
+- A finding dispute that one rebuttal and one recheck leave open, and accepted risks
+- Every branch action other than the rewrite's backup branch, every push and PR action,
+  and every commit that plan approval or entering `PR REVIEW` does not cover
+- Signing every commit on the branch, after the history rewrite and before the push
 - Merge and release or rollout actions
 
 The workflow names one exact next action before asking for approval.
 Approval for a phase does not also approve a repository or external action.
+Two approvals are the exception, and each covers only local actions.
+Plan approval covers the checkpoint commits of the build and of the code gate fixes.
+Entering `PR REVIEW` covers the close-out checkpoint and [the history rewrite](flow/5-pr-review.md#rewrite-the-history).
+
+## Team
+
+| Role               | Does                                                 |
+|--------------------|------------------------------------------------------|
+| `architect`        | Drafts `feature.md` and `plan.md` and never approves |
+| `developer`        | Implements one plan step inside its files            |
+| `code-reviewer`    | Checks a step with check runs and mutation checks    |
+| `qa`               | Raises coverage and triages findings                 |
+| `technical-writer` | Brings the docs to the code and drafts the PR text   |
+
+The primary agent leads the team: it briefs each role, verifies the result and commits.
+It commits each accepted step and gate fix as an unsigned checkpoint, and plan approval covers those local commits.
+Before the push, it rewrites the unpushed history into a few atomic commits and keeps a backup branch.
+The human signs those commits.
+See [the briefs](team/briefs.md), [the steps](team/steps.md) and [the team rules](team/rules.md).
 
 ## Artifacts
 
 Each tracked feature uses `docs/features/YYYYMMDD-<slug>/`.
 
-| File             | Purpose                                                          |
-|------------------|------------------------------------------------------------------|
-| `feature.md`     | Goal, context, scope, behavior, assumptions and contracts        |
-| `plan.md`        | Approach, tasks, checks, gates, phase and current step           |
-| `code-review.md` | Current code or PR review handoff, replies, rechecks and verdict |
+| File             | Purpose                                                    |
+|------------------|------------------------------------------------------------|
+| `feature.md`     | Goal, why, scope, how it works, criteria and decisions     |
+| `plan.md`        | Done checks, steps, gates, phase and current step          |
+| `code-review.md` | Current code review handoff, replies, rechecks and verdict |
 
 Deferred work goes to `docs/features/backlog.md` with a stable `BL-NNN` ID.
 Git and the PR keep history while feature artifacts keep current truth.
 
-See [the artifact guide](references/artifacts.md) for the document formats.
+See [the writing style](writing/style.md) and [what may change after approval](flow/changes.md#after-approval).
+Each file has [a template](templates/feature.md) and [a worked example](examples/feature.md).
 
 ## Review gates
 
-| Gate | When it runs                                      | Main focus                               |
-|------|---------------------------------------------------|------------------------------------------|
-| Plan | After the plan is ready and before implementation | Scope, feasibility and complete coverage |
-| Code | After implementation and local checks             | Behavior, contracts, tests and scope     |
-| PR   | On the pushed PR head after required CI           | Integration and release readiness        |
+| Review | When it runs                                      | Recorded in                 | Main focus                               |
+|--------|---------------------------------------------------|-----------------------------|------------------------------------------|
+| Plan   | After the plan is ready and before implementation | `plan.md`                   | Scope, feasibility and complete coverage |
+| Code   | After implementation and local checks             | `plan.md`, `code-review.md` | Behavior, contracts, tests and scope     |
+| PR     | On the pushed PR head, beside CI                  | PR comments, never a file   | Integration and release readiness        |
 
-Plan and code reviews can use standard or stress mode.
+`plan.md` tracks two gates: plan review and code review.
+The PR review runs on the PR itself.
+Plan and code reviews can use standard mode or a risk review.
 PR review always uses standard mode.
 
 ## Review modes
 
-| Mode              | Reviewers                                | Use when                                                |
-|-------------------|------------------------------------------|---------------------------------------------------------|
-| Standard          | One general reviewer                     | Default for plan, code and PR gates                     |
-| Stress            | General plus one named risk perspective  | A plan or code gate has a material risk                 |
-| Focused follow-up | The reviewer for the open finding source | Rechecking open IDs, their fixes and caused regressions |
+| Mode              | Reviewers                                | Use when                                                   |
+|-------------------|------------------------------------------|------------------------------------------------------------|
+| Standard          | One general reviewer                     | Default for the plan and code gates and the PR review      |
+| Risk review       | General plus one named risk perspective  | A plan or code gate has a material risk                    |
+| Focused follow-up | The reviewer for the open finding source | Rechecking open IDs, their fixes and caused regressions    |
+| Challenge pass    | One independent read-only reviewer       | The human asks to attack the finished change before the PR |
 
-Stress review runs when the human requests it or one of these risks could cause a blocker or major issue:
+A challenge pass runs only after a passing code gate and never changes its verdict.
+
+A risk review runs when the human requests it or one of these risks could cause a blocker or major issue:
 
 - Security, privacy or authorization
 - Data migration, corruption or loss
@@ -84,13 +117,13 @@ Stress review runs when the human requests it or one of these risks could cause 
 - Concurrency or distributed behavior
 - Cross-cutting integration
 
-Stress review does not run only because a change is large or unfamiliar.
+A risk review does not run only because a change is large or unfamiliar.
 It uses exactly two independent perspectives and the reviewers do not see each other's first result.
 
-A stress PR request needs a human choice.
-The options are a standard PR review or a stress code review on the PR diff followed by the standard PR gate.
+A PR risk review request gets an explanation instead.
+A risk review runs only at the plan and code gates, before the PR opens.
 
-See [the perspective guide](references/review-perspectives.md) for selection and combined verdict rules.
+See [the risk review rules](review/risk-review.md) for selection and combined verdict rules.
 
 ## Findings and verdicts
 
@@ -112,35 +145,12 @@ Useful optional work can move to the backlog.
 | `PASS`                 | Required evidence is complete and no finding blocks handoff |
 | `INCOMPLETE`           | Required evidence or a reviewer result is missing           |
 
-The primary agent fixes accepted blocker, major and clear in-scope medium findings.
-The human decides disputed medium findings, scope changes and accepted risks.
+The primary agent fixes every finding it accepts, of any severity, inside the approved scope.
+It gives each medium a disposition itself: fix, backlog or dispute.
+The human decides scope changes and accepted risks.
 
-After an evidence-backed dispute of a blocker or major, the reviewer gets one focused recheck.
+After an evidence-backed dispute of a finding of any severity, the reviewer gets one focused recheck.
 If it repeats the finding without answering the evidence or adding material evidence, the agent loop stops for a human decision.
-
-## PR review handoff
-
-PR preparation follows this order:
-
-1. Close the feature artifacts
-2. Resolve the intended source branch
-3. Ask separately for a branch action when needed, commit, push and PR action
-4. Wait for required CI
-5. Review the pushed PR head while the review handoff and allowed plan state updates stay local
-
-After a passing PR review, the workflow records the result in `plan.md` and asks separately to commit and push the final handoff.
-It may include `code-review.md` and current lifecycle fields or review gate state in the same feature's `plan.md`.
-The workflow checks the actual diff before applying this exception.
-Changes to scope, tasks, verification or approval requirements still reopen review, including mixed changes in `plan.md`.
-The allowed handoff changes keep the verdict, but final CI must pass before merge approval.
-
-After final CI passes, the human approves `PR REVIEW` and enters `RELEASE`.
-The workflow asks for merge approval only after that phase change.
-Later lifecycle state updates may stay local until the next approved commit.
-Any later push still needs final CI before merge.
-
-The review target remains the implementation head that was checked.
-It is not rewritten to the later handoff commit.
 
 ## Review configuration
 
@@ -148,12 +158,20 @@ Review model and effort settings apply only to a new independent review process.
 They do not change the active development session.
 
 Projects may override review settings in `.codex/feature-review.json` or `.claude/feature-review.json`.
-See [the review agent guide](references/review-agents.md) for the current defaults, format and precedence.
+See [the review settings](review/settings.md) for the current defaults, format and precedence.
 
 ## Detailed contracts
 
 - [Feature skill instructions](SKILL.md)
-- [Feature phases](references/phases.md)
-- [Review perspectives](references/review-perspectives.md)
+- Writing: [style](writing/style.md), [folder](writing/folder.md), [`feature.md`](writing/feature.md),
+  [`plan.md`](writing/plan.md) and [`code-review.md`](writing/code-review.md)
+- Flow: [1. feature](flow/1-feature.md), [2. plan](flow/2-plan.md), [3. build](flow/3-build.md),
+  [4. code review](flow/4-code-review.md) and [5. PR review](flow/5-pr-review.md), then at any point
+  [status](flow/status.md), [approvals](flow/approvals.md) and [changes](flow/changes.md)
+- Team: [rules](team/rules.md), [briefs](team/briefs.md) and [steps](team/steps.md)
+- Review: [1. prepare](review/1-prepare.md), [2. check](review/2-check.md), [3. findings](review/3-findings.md) and
+  [4. report](review/4-report.md), then when needed [challenge pass](review/challenge.md),
+  [risk review](review/risk-review.md) and [settings](review/settings.md)
 
-The `feature-review` skill owns the detailed gate and `code-review.md` handoff rules.
+The `review/` files own the detailed gate rules.
+[`writing/code-review.md`](writing/code-review.md) owns the `code-review.md` rules.

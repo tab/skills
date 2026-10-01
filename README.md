@@ -40,9 +40,9 @@ Start a new session after installation.
 | `humanify`         | `core`     | Make prose, Markdown and code comments clear and natural               |
 | `council`          | `thinking` | Stress-test an engineering decision with five independent perspectives |
 | `backlog`          | `workflow` | Track deferred work and preserve closed decisions                      |
+| `coverage`         | `workflow` | Raise test coverage to tiers by testability                            |
 | `feature`          | `workflow` | Plan and deliver a feature with clear scope and durable context        |
 | `feature-backfill` | `workflow` | Restore feature artifacts from repository history                      |
-| `feature-review`   | `workflow` | Review a feature plan, implementation or PR against its contract       |
 
 Use:
 
@@ -53,7 +53,15 @@ If `/cmt` conflicts with another command, use `/core:cmt` in Claude Code.
 
 ## Feature workflow
 
-The `feature` skill runs six visible phases with human checkpoints and independent plan, code and PR reviews.
+The `feature` skill runs six visible phases with human checkpoints and independent plan and code reviews.
+The files stop at the PR, where CI and any PR reviewer write comments and no file.
+For Claude Code, `workflow` ships five role agents: `architect`, `developer`, `code-reviewer`, `qa` and `technical-writer`.
+The primary agent briefs each role for its part of a phase.
+In the build, a `developer` and a `code-reviewer` take each plan step.
+The primary agent commits each accepted step as an unsigned checkpoint, and plan approval covers those local commits.
+Before the push, it rewrites the unpushed history into a few atomic commits, and the human signs them.
+After the last step, `qa` raises coverage with the `coverage` skill.
+After a passing code gate, the human can ask for a challenge pass.
 See [the feature workflow guide](plugins/workflow/skills/feature/README.md) for the pipeline, artifacts, review modes and settings.
 
 ## Hooks
@@ -80,7 +88,7 @@ See [hooks/README.md](hooks/README.md).
 │   ├── features/
 │   │   ├── backlog.md            # Prioritized deferred work and closed decisions
 │   │   └── YYYYMMDD-<slug>/
-│   │       ├── code-review.md     # Current code or PR review handoff, created when needed
+│   │       ├── code-review.md     # Current code review handoff, created when needed
 │   │       ├── feature.md        # Goal, scope and behavior
 │   │       └── plan.md           # Markdown tasks, checks and current progress
 │   └── src/                      # Astro landing page source
@@ -97,6 +105,7 @@ See [hooks/README.md](hooks/README.md).
     └── workflow/
         ├── .claude-plugin/
         ├── .codex-plugin/
+        ├── agents/                # Role agents for Claude Code
         └── skills/                # Feature lifecycle skills
 ```
 

@@ -85,14 +85,14 @@ Map evidence into artifacts without copying it:
 
 | Evidence                      | Artifact destination                              |
 |-------------------------------|---------------------------------------------------|
-| Verified problem and goal     | `feature.md` Goal and source-backed Context       |
+| Verified problem and goal     | `feature.md` Goal and source-backed Why           |
 | Delivered behavior            | `feature.md` acceptance criteria                  |
 | Compatibility boundary        | `feature.md` Scope or Contracts                   |
 | Accepted durable rationale    | `feature.md` Decisions                            |
 | Historical change or decision | `feature.md` Sources                              |
 | Final delivery evidence       | `feature.md` Sources                              |
 | Current implementation        | `plan.md` files, components and observed behavior |
-| Tests and verified checks     | `plan.md` Verification                            |
+| Tests and verified checks     | `plan.md` Done when                               |
 | Verified release operation    | `plan.md` Rollout and rollback                    |
 
 Use atomic acceptance criteria and map implementation steps to them.
@@ -109,7 +109,7 @@ Before saving, confirm:
 - Sources do not repeat current implementation links from the plan
 - The plan describes observed implementation rather than imagined original intent
 - Each implementation item names an actual file, component or operational mechanism
-- Verification names current coverage and specific gaps without repeating delivery history
+- `Done when` names current coverage and specific gaps without repeating delivery history
 - Sources are concise and stable
 - Current code does not contradict the artifact
 - Existing feature artifacts do not already cover the outcome

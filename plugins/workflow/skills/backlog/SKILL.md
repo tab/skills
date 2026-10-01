@@ -54,6 +54,7 @@ Add `Source: <link>` as another nested bullet only when a useful source exists.
 Resolve a source link relative to `docs/features/backlog.md`.
 For a feature source, use a target such as `20260831-example/feature.md`, not
 `docs/features/20260831-example/feature.md`.
+Add `Boundary: <limit>` as another nested bullet when the item comes from a review triage.
 
 Use priority sections in this order:
 

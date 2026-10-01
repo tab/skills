@@ -1,9 +1,10 @@
 ---
 name: feature
 description: >
-  Plan, implement and continue a tracked software feature with a clear contract, current plan and controlled scope.
-  Use when the user wants to start, save, build or resume feature work that needs durable project context.
-  Do not use for review-only requests or routine edits that need no lasting feature record.
+  Plan, build and review a tracked software feature with a clear contract, current plan and controlled scope.
+  Use when the user wants to start, save, build or resume feature work that needs durable project context,
+  or asks for a review of a feature plan or code gate or of its PR.
+  Do not use for routine edits that need no lasting feature record.
 ---
 
 # Feature
@@ -11,26 +12,34 @@ description: >
 Guide a feature from an approved idea to release while keeping the human-readable contract and current plan in the repository.
 
 Use `docs/features/YYYYMMDD-<slug>/feature.md` for what and why.
-Use `docs/features/YYYYMMDD-<slug>/plan.md` for how, proof and current progress.
-Use `docs/features/YYYYMMDD-<slug>/code-review.md` for the current code or PR review handoff.
+Use `docs/features/YYYYMMDD-<slug>/plan.md` for the steps, the done checks and current progress.
+Use `docs/features/YYYYMMDD-<slug>/code-review.md` for the current code review handoff.
 
-Read [the artifact guide](references/artifacts.md) before creating or materially rewriting either document.
-Read [the phase guide](references/phases.md) before starting or resuming tracked feature work.
+When the request is only to review a feature gate, read [the first review step](review/1-prepare.md) and follow it.
+Run no phase and change no artifact except what the review files allow.
+Otherwise read the writing rules before creating or materially rewriting either document:
+[style](writing/style.md), [the folder](writing/folder.md), [`feature.md`](writing/feature.md) and [`plan.md`](writing/plan.md).
+Read the flow rules before starting or resuming tracked feature work: [status](flow/status.md), [approvals](flow/approvals.md),
+[changes](flow/changes.md) and the phase files, from [`1-feature.md`](flow/1-feature.md) to [`5-pr-review.md`](flow/5-pr-review.md).
 
 ## Roles
 
-- The primary agent discusses, plans, implements and fixes the feature
-- One or two review agents independently review the plan and code, while one review agent checks the PR
-- The human owns scope and plan approval, disputed medium findings, merge and release decisions
+- The primary agent leads: it discusses, plans and decides
+- It implements and fixes the feature itself or through the team
+- One or two review agents independently review the plan and code, while CI and any PR reviewer check the PR
+- The human owns scope and plan approval, a dispute the agents leave open, accepted risks, merge and release decisions
 
 The shared skill instructions stay neutral between Claude Code and Codex.
 The linked review config holds the default reviewer, model and effort.
 The user, primary agent or an external runner starts each agent handoff.
 
+Read the team rules before delegating a draft, a step or a pass: [rules](team/rules.md), [briefs](team/briefs.md)
+and [steps](team/steps.md).
+
 ## Configure review handoffs
 
-Read [the review agent guide](references/review-agents.md) and
-[the bundled defaults](references/review-agents.json) before starting an independent review.
+Read [the review settings](review/settings.md) and
+[the bundled defaults](review/settings.json) before starting an independent review.
 Resolve the linked script path from this `SKILL.md`, then run
 [the review config resolver](scripts/resolve-review-agent.py) with the repository root and requested gate.
 
@@ -44,10 +53,10 @@ Project overrides are optional and belong only in `.codex/feature-review.json` o
 repository root.
 Do not read a user-level or parent-directory override.
 Do not create or change a project override unless the user asks.
-If the resolver cannot run, follow the linked guide directly and report that fallback.
+If the resolver cannot run, follow the linked settings directly and report that fallback.
 
-Read [the review perspective guide](references/review-perspectives.md) when a risk needs stress review or the human requests
-another perspective.
+Read [the risk review rules](review/risk-review.md) when a risk needs a risk review or the human requests another
+perspective.
 
 Use the `humanify` skill for artifact cleanup when it is available.
 Otherwise make the same focused prose pass directly and state that the fallback was used.
@@ -74,10 +83,11 @@ When a new folder is needed, prefix a short lowercase hyphenated slug with the c
 Keep that original dated folder name when the feature is resumed or changed.
 Historical reconstruction uses the separate `feature-backfill` workflow and its verified delivery date.
 
-Store the active phase in `plan.md` and follow the phase guide's continuation, invalidation and blocker rules.
+Store the active phase in `plan.md` and follow the continuation, invalidation and blocker rules of the `flow/` files.
 If an active plan has no `Phase`, infer the earliest unfinished phase from current evidence and add it before continuing.
 Do not treat an old status, verdict or chat message as fresh approval.
 Complete one phase per response by default, return its short report and stop at its boundary.
+Plan approval is the exception: the build and the code gate run as [one stretch](flow/approvals.md#run-the-build-and-the-code-gate-as-one-stretch).
 
 ## Choose the smallest workflow
 
@@ -91,13 +101,14 @@ Routine work may use only the PR and release note unless the user asks for featu
 Standard work uses both feature documents.
 Large or high-risk work uses both documents and adds an ADR only when a real long-lived decision needs separate treatment.
 
-Use standard review unless the linked perspective guide identifies a material risk or the human requests stress review.
-Stress review adds one named risk perspective to the plan and code gates.
+Use standard review unless the linked risk review rules identify a material risk or the human requests a risk review.
+A risk review adds one named risk perspective to the plan and code gates.
 It never adds another PR reviewer.
 
 ## FEATURE phase
 
-Create or refactor `feature.md` from the artifact guide.
+Create or refactor `feature.md` from [the contract rules](writing/feature.md).
+The primary agent may ask the `architect` for a draft and stays the author of what goes to the human.
 For new tracked work, create the small `plan.md` header with `Phase: feature`, the current step and gates.
 Keep each fact in one place and link to it elsewhere.
 
@@ -115,13 +126,14 @@ Do not enter `PLAN` while the goal, scope, required behavior or important contra
 ## PLAN phase
 
 After feature approval, set `Phase: plan`, change the status to `draft` and create or refactor the full `plan.md`.
+The primary agent may ask the `architect` for a draft and stays the author of what goes to the human.
 
 Before implementation:
 
-1. Map the approach, steps and verification to the approved acceptance criteria
+1. Map the steps and `Done when` to the approved acceptance criteria
 2. Run the focused prose pass on both documents without changing their meaning, facts or certainty
 3. Set the plan status to `ready for plan review`
-4. Choose standard or stress review and name the risk perspective when stress review applies
+4. Choose standard review or a risk review and name the risk perspective when a risk review applies
 5. Resolve the review-only configuration for each required review process
 6. Record the active mode and perspective, then start the required independent plan review or reviews
 7. Record `INCOMPLETE` and stop when any required review cannot finish or required evidence is missing
@@ -131,7 +143,7 @@ Before implementation:
 11. Set the plan status to `ready for approval` and name plan approval as the current step
 12. Return the `PLAN` phase report and wait for explicit user approval
 
-Semantic content includes the goal, context, scope, behavior, assumptions, contracts, decisions, approach, steps and verification.
+Semantic content includes the goal, why, scope, behavior, assumptions, contracts, decisions, steps and `Done when`.
 
 Do not start while a blocker or major plan finding remains open.
 Do not start without explicit user approval of the final reviewed plan.
@@ -141,18 +153,21 @@ Do not start without explicit user approval of the final reviewed plan.
 After plan approval, set `Phase: build`, set the plan status to `in progress` and name one current step.
 
 Implement only the approved scope.
-Update the existing status, current step, assumptions and decisions in place as the truth changes.
+Run [the step loop](team/steps.md), or implement directly when the host cannot delegate.
+Commit each accepted step as a checkpoint, as [the commit rules](team/steps.md#commits) say.
+After the last step, run the passes the step loop lists.
+Update the plan state in place as the truth changes, as [the freeze rules](flow/changes.md#after-approval) allow.
 Do not append a progress diary, review transcript or chat summary.
 
 Map implementation and tests back to acceptance criteria.
-If implementation proves the contract wrong or incomplete, stop and update the contract before continuing.
-After the planned work and available checks finish, return the `BUILD` phase report and stop before code review.
+If implementation proves the contract wrong or incomplete, stop and propose the change to the human before continuing.
+After the planned work and available checks finish, enter `CODE REVIEW` in the same run, with no `BUILD` report.
 
 ## Control discoveries
 
 Classify work found during implementation:
 
-- **Required and in scope** – include it and update the plan when needed
+- **Required and in scope** – include it, and ask the human before adding or changing a plan step, except for a code gate fix
 - **Useful but not required** – add or update a backlog item and continue the feature
 - **Required prerequisite outside the current scope** – mark the plan `blocked`, record the exact resume point and handle the
   prerequisite as a separate feature
@@ -166,67 +181,85 @@ Its completion returns control to the saved current step and verification state 
 
 ## Review handoffs
 
-Use the independent review agent at three gates:
+Use the independent review agent at two gates:
 
 1. Plan review before implementation
 2. Code review after local verification and before opening the PR
-3. PR review on the current PR head after CI and accepted fixes
 
-Read the `feature-review` skill and its linked code review handoff before starting a code or PR gate.
+`plan.md` tracks only these two.
+The PR review runs on the PR and writes no file, as the `PR REVIEW` phase says.
+
+Read [the first review step](review/1-prepare.md) and
+[the code review rules](writing/code-review.md) before a code gate.
+The brief of a gate reviewer carries the absolute path of `review/1-prepare.md`, resolved from this skill's own folder,
+installed or local, so a reviewer in any working directory can read it.
+That file links the rest of `review/` and `writing/code-review.md`.
+When its file-reading tool is denied outside the project, the reviewer reads that file and the files it links with the shell.
+The brief also gives each check command and its latest result, because a read-only reviewer may not be able to run it.
 Resolve the review-only configuration before every gate and focused follow-up.
-Use the linked perspective guide to select and run stress review for plan and code gates.
+Use the linked risk review rules to select and run a risk review for plan and code gates.
+
+**Claude Code only.** When the resolved reviewer is `claude` and the host ships the `code-reviewer` agent, start
+`workflow:code-reviewer` with the resolved model and a brief that names the gate and the path of `review/1-prepare.md`.
+Pass the resolved model on every start of the reviewer, a retry or a focused follow-up included.
+The agent's effort is fixed in its definition, so compare it with the resolved effort.
+At or above the resolved effort, run the review and record the agent's effort in the gate record's `Effort` field as the effort used.
+Below it, or when the host cannot rank the two values, report both and let the human start the review.
+After it returns and before you save its result, confirm that `git status` and `git diff` show the same as before it ran,
+apart from the untracked output of a named check.
 
 Record the active review before starting it.
 Set the matching gate in `plan.md` to `in review`.
-For code and PR gates, follow the linked handoff rules to record the round, target and resolved review settings in `code-review.md`.
-For the PR gate, use the linked handoff's narrow exception for lifecycle and gate state updates in `plan.md`.
+For the code gate, follow the linked handoff rules to record the round, target and review settings used in `code-review.md`.
 For a focused follow-up, preserve the current findings and replies while marking the next round `in review`.
 
-For a standard code or PR gate, the review agent produces the current result for `code-review.md`.
+For a standard code gate, the review agent produces the current result for `code-review.md`.
 Let it write the file only when the host can limit its write access to that handoff.
 When the reviewer is read-only, require the complete file content and save it verbatim before processing findings.
 The primary agent must not edit that review content during the handoff.
 
-For a stress code gate, both reviewers return independent source results and the primary agent owns the combined
+For a code risk review, both reviewers return independent source results and the primary agent owns the combined
 `code-review.md` file.
-Copy each result without changing its finding content and derive the verdict through the linked perspective guide.
-Do not let either stress reviewer overwrite the combined file.
+Copy each result without changing its finding content and derive the verdict through the linked risk review rules.
+Do not let either risk reviewer overwrite the combined file.
 
 Keep the review process attached until it returns its verdict and handoff.
 Do not start a background reviewer that will be stopped when the current turn or process exits.
 When the host cannot keep it alive, return the resolved configuration and an exact command for the human or external runner.
-When a started review or required stress perspective stops or returns partial evidence, record `INCOMPLETE` with the reason and
-keep the gate unchecked.
+When a started review or required risk review perspective stops or returns partial evidence, record `INCOMPLETE` with the
+reason and keep the gate unchecked.
 Do not treat findings from a partial review as a complete verdict.
 
 Read every finding, make accepted fixes and add a short `Reply` with what changed or why the code should stay.
+Commit each accepted fix as a checkpoint, as [the commit rules](team/steps.md#commits) say.
 Do not change the reviewer's finding text, severity, location or suggested fix.
 Hand the file and changed areas back to the review agent for a focused recheck.
 Only one agent updates the file at a time.
 
 For standard review, the review agent rewrites the whole file after each round and keeps stable finding IDs.
-For stress review, the primary agent replaces only the returned perspective in the combined file and keeps both sources visible.
-A new PR review replaces the earlier code review.
+For a risk review, the primary agent replaces only the returned perspective in the combined file and keeps both sources visible.
 Start the same gate again only when the user or primary agent asks.
 
 Keep each gate unchecked while its latest verdict is `CHANGES NEEDED` or `INCOMPLETE`.
 Check it after `PASS`, or after every medium finding from `PASS WITH FOLLOW-UPS` has a recorded disposition.
 A later full review replaces the verdict and may reopen the gate.
 
-Do not set `Current step` to `complete` while a required review, merge or release step remains.
+`Current step` ends at the PR. The files never record the merge or the release.
 
-The primary agent fixes accepted blocker, major and clear in-scope medium findings.
-The human chooses the disposition of disputed medium findings.
+The primary agent fixes every finding it accepts, of any severity, inside the approved scope.
+It may add a plan step for such a fix without the human's approval.
+A fix that changes `feature.md` or the scope is a contract change and goes to the human.
 Minor or low-value disagreement does not start another review round.
-After the primary disputes a blocker or major with evidence, allow one focused recheck.
+After the primary disputes a finding of any severity with evidence, allow one focused recheck.
 If the reviewer keeps it open without answering that evidence or adding material evidence, stop the agent loop.
 Keep the gate open and ask the human to choose the next action.
 A request to continue until the agents agree does not authorize more unchanged rounds.
 
 ## CODE REVIEW phase
 
-After build approval, set `Phase: code review` and run the code gate through the review handoff above.
-Every code change after a review reopens this gate and needs a current verdict.
+After the build, set `Phase: code review` in the same run and run the code gate through the review handoff above.
+Stop and ask the human only for a reason [the stretch](flow/approvals.md#run-the-build-and-the-code-gate-as-one-stretch) lists.
+Before the PR opens, every code change after a review reopens this gate and needs a current verdict.
 
 When the code gate passes, set the plan status to `implemented`, name PR preparation as the current step and return the
 `CODE REVIEW` phase report.
@@ -235,72 +268,46 @@ Stop before entering `PR REVIEW` or performing any external action.
 ## PR REVIEW phase
 
 After code review approval, set `Phase: pr review`.
-Do not treat approval to enter this phase as approval for a branch, commit, push or PR action.
+Approval to enter this phase covers two local actions: the close-out checkpoint and the history rewrite.
+It does not approve a branch other than the rewrite's backup branch, a push or PR action, or any other commit.
 
-Before requesting any of those actions, close out the documents:
+1. Close out the artifacts before the push. [The freeze rules](flow/changes.md#after-approval) say what may change
+2. Confirm every acceptance criterion has implementation or verification evidence
+3. Run the focused prose pass and read both documents once as a first-time contributor
+4. Keep `Status: implemented` and name the PR as `Current step`. This is the last update of the files
+5. Resolve the source branch from the approved plan, the current branch and project conventions.
+   Ask the human when it cannot be resolved safely, and before creating or switching the source branch
+6. Commit the close-out as a checkpoint
+7. Rewrite the unpushed history into a few atomic commits and hand over the signing, as
+   [the rewrite rules](flow/5-pr-review.md#rewrite-the-history) say
+8. Ask separately for the push and the PR
+9. CI and any PR reviewer run on the PR. They write PR comments, never a file
+10. Fix an accepted finding with a new unsigned commit after the human's approval, and push it to the PR
+11. The phase ends when the human approves the merge
 
-- Make contracts and assumptions match the implementation
-- Record material deviations as current decisions
-- Remove stale questions and temporary notes
-- Confirm every acceptance criterion has implementation or verification evidence
-- Run the focused prose pass to remove repetition and unclear or AI-style wording without changing meaning
-- Read both documents once as a first-time contributor
-
-Then confirm the intended source branch from the approved plan, current branch and project conventions.
-Ask the human when it cannot be resolved safely.
-
-Prepare the PR in this order and request separate approval for each action that is needed:
-
-1. Create or switch to the intended source branch
-2. Commit the closed-out implementation and artifacts
-3. Push the source branch
-4. Open or update the PR
-
+The primary agent may ask the `technical-writer` for the PR title and body.
+The human still approves each action.
 Name only the next eligible action in the phase report and stop after performing it.
-Branch and commit actions are local repository changes.
-Push and PR actions change an external system.
-
-Wait for required CI, then run the standard PR gate on the pushed PR head.
-Keep `code-review.md` and allowed `plan.md` state updates local while the review and focused follow-ups run.
-The exception covers only `Status`, `Phase`, `Current step` and review gate checkboxes or verdicts that record current workflow state.
-It does not cover changes to scope, decisions, implementation tasks, verification or approval requirements.
-Inspect the actual diff before applying the exception, as defined in the `feature-review` handoff.
-Do not include other unpushed implementation or artifact changes in the review evidence.
-
-When an accepted fix changes implementation or artifacts outside this exception, request separate commit and push approvals,
-wait for required CI and reopen the PR gate on the new head.
-Any change outside the exception invalidates the earlier PR verdict.
-
-After the PR gate passes, record its result in `plan.md` and check the complete diff against the reviewed head.
-The final handoff may contain `code-review.md` and only the allowed state updates in `plan.md`.
-Request separate approval to commit that handoff, then request separate approval to push it.
-This handoff head change keeps the PR verdict and does not start another review round.
-Do not rewrite the recorded review target to the handoff commit.
-Wait for required CI on the final head.
-If the diff includes any other change, reopen the PR gate instead.
-
-After final CI passes, name PR review approval as the current step, return the `PR REVIEW` phase report and stop.
-Later allowed state updates, including entry into `release`, keep the verdict and may stay local until the next approved commit.
-Any later push still needs required CI on its final head before merge.
-Do not request merge approval until the human approves this phase and the workflow enters `RELEASE`.
+Nobody edits `feature.md`, `plan.md` or `code-review.md` after the PR opens.
 
 ## RELEASE phase
 
-After PR review approval, set `Phase: release`.
-Request approval for merge and perform only that external action.
-Verify the merge before setting the plan status to `merged`.
-
+The human's merge approval enters this phase. No file records it.
+Perform only the approved merge.
 Request separate approval for a release or another rollout action.
-Set the plan status to `released` and `Current step` to `complete` only after the release is verified.
-
-Set status to `implemented`, `merged` and `released` only when each event has happened.
 Never infer merge or release from passing tests.
+Change no file.
 
 ## Safety and boundaries
 
-- Do not create or switch a branch, commit, push, open or change a PR, merge, release or write to an external system without user
-  approval
+- Plan approval covers the checkpoint commits of the build and of the code gate fixes
+- Entering `PR REVIEW` covers the close-out checkpoint and the history rewrite
+- Never sign a commit, rewrite a pushed commit or delete the backup branch of a rewrite
+- Do not create or switch a branch, apart from the backup branch of a rewrite,
+  make any other commit, push, open or change a PR, merge, release or write to an external system
+  without user approval
 - Do not change code when the user asked only to discuss, plan or review
-- During a code or PR review, the review agent may change only `code-review.md`, or nothing when it is read-only
+- During a code review, the review agent may change only `code-review.md`, or nothing when it is read-only.
+  A PR reviewer changes no file
 - Preserve unrelated working-tree changes and current project conventions
 - If an independent agent is unavailable, say which review gate could not be independent and let the human choose whether to continue

@@ -104,7 +104,7 @@ Skip it when it already covers the outcome and sources.
 ### `feature.md`
 
 Start a small feature with `Goal`, atomic acceptance criteria and `Sources`.
-Add `Context`, `Scope`, `Assumptions`, `Contracts` or `Decisions` only when they contain source-backed information that a contributor
+Add `Why`, `Scope`, `Assumptions`, `Contracts` or `Decisions` only when they contain source-backed information that a contributor
 cannot learn quickly from the current implementation.
 
 Do not fill a template for completeness.
@@ -128,14 +128,12 @@ Name the actual files, components or operational mechanisms that implement each 
 Describe available verification evidence and important gaps.
 Include rollout or rollback only when the sources support it and it still helps current maintenance.
 
-Do not repeat PR, merge or release history already covered by `feature.md` and the lifecycle status.
-Verification should name what current checks cover and any specific behavior they do not test.
+Do not repeat PR, merge or release history already covered by `Sources` in `feature.md`.
+`Done when` should name what current checks cover and any specific behavior they do not test.
 Use checked Markdown tasks for the delivered implementation items reconstructed from evidence.
 
-Set `Current step` to `Complete`.
-Use `merged` only when default-branch integration is verified.
-Use `released` only when a release containing the outcome is verified.
-Otherwise use `implemented` and state which lifecycle evidence is missing.
+Set `Current step` to `Complete` and `Status` to `implemented`, the last status.
+Name the merge or release evidence in `Sources`, or state which of it is missing.
 
 Do not restate acceptance criteria as generic delivered steps.
 Do not write imagined rejected options, planned steps, tests, rollout or rationale.

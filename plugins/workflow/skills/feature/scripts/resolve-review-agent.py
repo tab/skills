@@ -15,7 +15,7 @@ OVERRIDE_PATHS = {
     "codex": Path(".codex/feature-review.json"),
     "claude": Path(".claude/feature-review.json"),
 }
-DEFAULTS = Path(__file__).resolve().parents[1] / "references" / "review-agents.json"
+DEFAULTS = Path(__file__).resolve().parents[1] / "review" / "settings.json"
 
 
 class ConfigError(ValueError):
