@@ -62,6 +62,7 @@ Start a new session after upgrading.
 | `clarify`          | `core`     | Explain expectation mismatches with current evidence                   |
 | `cmt`              | `core`     | Draft a Conventional Commit message for the current Git changes        |
 | `humanify`         | `core`     | Make prose, Markdown and code comments clear and natural               |
+| `ste`              | `core`     | Write English prose using ASD-STE100 Simplified Technical English      |
 | `council`          | `thinking` | Stress-test an engineering decision with five independent perspectives |
 | `backlog`          | `workflow` | Track deferred work and preserve closed decisions                      |
 | `coverage`         | `workflow` | Raise test coverage to tiers by testability                            |

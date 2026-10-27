@@ -57,4 +57,9 @@ export const skills: Skill[] = [
     plugin: "core",
     description: [{ text: "Make prose, Markdown and code comments clear and natural" }],
   },
+  {
+    name: "ste",
+    plugin: "core",
+    description: [{ text: "Write English prose using ASD-STE100 Simplified Technical English" }],
+  },
 ];
