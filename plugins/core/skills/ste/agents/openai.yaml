@@ -1,0 +1,4 @@
+interface:
+  display_name: "STE"
+  short_description: "Write English prose with ASD-STE100"
+  default_prompt: "Use $ste to write or revise this English text with ASD-STE100 Simplified Technical English."

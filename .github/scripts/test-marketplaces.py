@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import runpy
 import shutil
 import subprocess
 import sys
@@ -260,6 +261,56 @@ def test_reflow() -> None:
     print("Reflow tests passed")
 
 
+def test_skill_metadata() -> None:
+    discover = runpy.run_path(str(ROOT / ".github/scripts/validate.py"))["discover_skills"]
+    valid = (
+        'interface:\n'
+        '  display_name: "STE"\n'
+        '  short_description: "Write English prose with ASD-STE100"\n'
+        '  default_prompt: "Use $ste to revise this text."\n'
+    )
+    cases = [
+        (valid, None),
+        (valid + '\npolicy:\n  allow_implicit_invocation: false\n', None),
+        (None, "missing file"),
+        (valid.replace('  display_name: "STE"\n', ''), "interface.display_name"),
+        (valid.replace('  short_description: "Write English prose with ASD-STE100"\n', ''), "interface.short_description"),
+        (valid.replace('  default_prompt: "Use $ste to revise this text."\n', ''), "interface.default_prompt"),
+        (valid.replace('"STE"', '"  "'), "non-empty interface.display_name"),
+        (valid.replace('"STE"', '"Ste"'), "display_name must be 'STE'"),
+        (valid.replace('Write English prose with ASD-STE100', 'Too short'), "25–64 characters"),
+        (valid.replace('Write English prose with ASD-STE100', 'x' * 65), "25–64 characters"),
+        (valid.replace('$ste', '$ste-extra'), "default_prompt must mention $ste"),
+        (valid.replace('"STE"', 'STE'), "double-quoted single-line strings"),
+        (valid.replace('"STE"', '"bad\\q"'), "invalid quoted string"),
+        (valid + '  display_name: "STE"\n', "duplicate interface field"),
+        (valid + 'interface:\n', "one interface mapping"),
+        (valid.replace('interface:', 'other:'), "one interface mapping"),
+    ]
+    with tempfile.TemporaryDirectory(prefix="skills-metadata-") as test_dir:
+        test_root = Path(test_dir)
+        discover.__globals__["ROOT"] = test_root
+        skill_root = test_root / "skills/ste"
+        (skill_root / "agents").mkdir(parents=True)
+        (skill_root / "SKILL.md").write_text(
+            '---\nname: ste\ndescription: Write English prose.\n---\n', encoding="utf-8"
+        )
+        metadata = skill_root / "agents/openai.yaml"
+        for index, (source, expected) in enumerate(cases):
+            if source is None:
+                metadata.unlink(missing_ok=True)
+            else:
+                metadata.write_text(source, encoding="utf-8")
+            problems: list[str] = []
+            discover(test_root / "skills", problems)
+            if (expected is None and problems) or (
+                expected is not None and not any(expected in problem for problem in problems)
+            ):
+                raise RuntimeError(f"unexpected metadata validation in case {index}: {problems}")
+
+    print("Skill metadata validation tests passed")
+
+
 def test_claude(plugins: list[dict[str, Any]]) -> None:
     with tempfile.TemporaryDirectory(prefix="skills-claude-") as config_dir:
         env = os.environ.copy()
@@ -328,6 +379,7 @@ def main() -> int:
 
     test_review_config()
     test_reflow()
+    test_skill_metadata()
 
     codex_marketplace = load_json(ROOT / ".agents/plugins/marketplace.json")
     marketplace_name = codex_marketplace["name"]

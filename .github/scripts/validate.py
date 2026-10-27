@@ -100,6 +100,63 @@ def frontmatter(path: Path, problems: list[str]) -> dict[str, str]:
     return fields
 
 
+def validate_skill_metadata(skill_root: Path, problems: list[str]) -> None:
+    path = skill_root / "agents/openai.yaml"
+    label = path.relative_to(ROOT)
+    if not path.is_file():
+        problems.append(f"missing file: {label}")
+        return
+
+    fields: dict[str, str] = {}
+    in_interface = False
+    interface_count = 0
+    # shortcut: parse the repository's quoted single-line fields, extend when the format changes
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        if line == "interface:":
+            interface_count += 1
+            in_interface = True
+            continue
+        if not line[0].isspace():
+            in_interface = False
+        if not in_interface:
+            continue
+        match = re.fullmatch(r"  ([a-z_]+): (\".*\")", line)
+        if not match:
+            problems.append(f"{label} interface fields must use double-quoted single-line strings")
+            continue
+        key, raw_value = match.groups()
+        try:
+            value = json.loads(raw_value)
+        except json.JSONDecodeError:
+            problems.append(f"{label} contains an invalid quoted string: {key}")
+            continue
+        if key in fields:
+            problems.append(f"{label} contains duplicate interface field: {key}")
+        fields[key] = value
+
+    if interface_count != 1:
+        problems.append(f"{label} must contain one interface mapping")
+    for key in ("display_name", "short_description", "default_prompt"):
+        if not fields.get(key, "").strip():
+            problems.append(f"{label} must contain a non-empty interface.{key}")
+
+    name = skill_root.name
+    expected_name = " ".join(
+        word.upper() if word in {"cmt", "ste"} else word.capitalize()
+        for word in name.split("-")
+    )
+    if fields.get("display_name") and fields["display_name"] != expected_name:
+        problems.append(f"{label} display_name must be {expected_name!r}")
+    if fields.get("short_description") and not 25 <= len(fields["short_description"]) <= 64:
+        problems.append(f"{label} short_description must contain 25–64 characters")
+    if fields.get("default_prompt") and not re.search(
+        rf"\${re.escape(name)}(?![a-zA-Z0-9_-])", fields["default_prompt"]
+    ):
+        problems.append(f"{label} default_prompt must mention ${name}")
+
+
 def discover_skills(skills_root: Path, problems: list[str]) -> list[str]:
     if not skills_root.exists():
         return []
@@ -129,6 +186,7 @@ def discover_skills(skills_root: Path, problems: list[str]) -> list[str]:
             problems.append(f"missing description in {skill_file.relative_to(ROOT)}")
 
         names.append(entry.name)
+        validate_skill_metadata(entry, problems)
         check_links(entry, problems)
 
     return names

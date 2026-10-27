@@ -24,10 +24,16 @@ Do not put a skill in `core` only because it is useful.
 2. Keep `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json` in the selected plugin
 3. Use a lowercase hyphenated `name` and a short specific `description` in `SKILL.md`
 4. Keep the main workflow in `SKILL.md` and move detailed conditional guidance to `references/`
-5. Add `agents/openai.yaml` when Codex UI metadata helps users find the skill
+5. Add `agents/openai.yaml` with `display_name`, `short_description` and `default_prompt` under `interface`
 6. Bump the plugin version in both of its manifests when an installed skill changes
 
 Do not include credentials, internal URLs or environment-specific paths.
+
+Use title case for display names and uppercase for the acronyms `CMT` and `STE`.
+Convert hyphens in skill names to spaces in display names.
+Use double-quoted single-line strings for interface fields.
+Keep short descriptions between 25 and 64 characters.
+Include the exact `$skill-name` reference in each default prompt.
 
 ## Check locally
 
